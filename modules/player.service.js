@@ -3,60 +3,51 @@
 const http = require('http');
 const fs = require('fs');
 const AdmZip = require('adm-zip');
-const moment = require('moment');
-let fileName = 'data/players-' + moment().format('DDMMYY') + '.zip';
 
 class FidePlayerService {
 
     constructor(properties) {
         this.properties = properties;
+        this.fide = properties.db.fide;
     }
 
-    download() {
-        console.log('download service initialised');
-        let fide = this.properties.db.fide;
-
+    download(fileName) {
+        const that = this;
         return new Promise(function(fulfill, reject) {
             try {
-                let file = fs.createWriteStream('./data/test');
-                let request = http.get(fide.url, function(response) {
-                    response.pipe(fileName);
+                let file = fs.createWriteStream(that.fide.folder + '/' + fileName);
+                http.get(that.fide.url, function(response) {
+                    response.pipe(file);
                     file.on('finish', function() {
-                        file.close(cb); // close() is async, call cb after close completes.
-                        fulfill('sucesss');
+                        file.close(); 
+                        fulfill('Download complete.');
                     });
-                }).on('error', function(err) { // Handle errors
-                    console.log('error occured');
-                    fs.unlink(fide.folder); // Delete the file async. (But we don't check the result)
-                    if (cb) cb(err.message);
-                    reject(err);
+                }).on('error', function(err) {
+                    fs.unlink(that.fide.folder);
+                    reject(new Error(err));
                 });
             } catch (err) {
                 reject(new Error(err));
             }
-
-
         });
     }
 
     extract(file) {
-        console.log('extract service initialised');
-        let fide = this.properties.db.fide;
-
+        const that = this;
         return new Promise(function(fulfill, reject) {
 
             if (file.indexOf('.zip') === -1) {
                 reject(new Error('File must be stored as a .zip'));
             }
 
-            let zip = new AdmZip(fide.folder + file);
+            let zip = new AdmZip(that.fide.folder + '/' + file);
             let zipEntries = zip.getEntries();
 
             zipEntries.forEach(function(zipEntry) {
-                if (zipEntry.entryName === fide.txtFile) {
+                if (zipEntry.entryName === that.fide.txtFile) {
                     try {
-                        zip.extractEntryTo(fide.txtFile, fide.folder, false, true);
-                        fulfill('File extracted successfully');
+                        zip.extractEntryTo(that.fide.txtFile, that.fide.folder, false, true);
+                        fulfill('Extract complete.');
                     } catch (err) {
                         reject(new Error(err));
                     }
@@ -66,7 +57,6 @@ class FidePlayerService {
             });
         });
     }
-
 }
 
-module.exports = FidePlayerService
+module.exports = FidePlayerService;

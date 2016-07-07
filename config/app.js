@@ -8,7 +8,7 @@ module.exports = {
         fide: {
             url: 'http://ratings.fide.com/download/players_list.zip',
             folder: './data',
-            txtFile: '/players_list_foa.txt'
+            txtFile: 'players_list_foa.txt'
         }
     }
 };

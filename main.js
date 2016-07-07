@@ -1,29 +1,41 @@
 'use strict';
-//core
-
 const config = require('./config/app');
-const firebase = require('firebase');
-const ratingDb = new Firebase(config.db.firebase.url);
+const moment = require('moment');
 const FidePlayerService = require('./modules/player.service');
 const Players = new FidePlayerService(config);
 
-const fideZipUrl = config.db.fide.url;
 
-
-function download() {
-    return Players.download();
+function startProcess() {
+        return new Promise(function(fulfill, reject) {
+            try {
+                let fileName = 'fide-players-' + moment().format('DD-MM-YY') + '.zip';
+                console.log('created file name with current date / time.');
+                fulfill(fileName);
+            } catch (err) {
+                reject(new Error(err));
+            }
+        });
 }
 
-function extract() {
-    return Players.extract('players-040516.zip');
+function download(file) {
+    return Players.download(file);
 }
 
-function success() {
-    console.log('done');
+function extract(file) {
+    return Players.extract(file);
 }
 
-download().then(function(data){
+function finish(data) {
     console.log(data);
-}, function(err) {
-    console.log(err);
-});
+    process.exit();
+}
+
+function error(data) {
+    console.log(data.Error);
+    process.exit();
+}
+
+startProcess()
+    .then(download, error)
+    .then(extract, error)
+    .then(finish);
