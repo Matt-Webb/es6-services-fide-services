@@ -19,8 +19,8 @@ class FidePlayerService {
                 http.get(that.fide.url, function(response) {
                     response.pipe(file);
                     file.on('finish', function() {
-                        file.close(); 
-                        fulfill('Download complete.');
+                        file.close();
+                        fulfill(fileName);
                     });
                 }).on('error', function(err) {
                     fs.unlink(that.fide.folder);
@@ -36,6 +36,7 @@ class FidePlayerService {
         const that = this;
         return new Promise(function(fulfill, reject) {
 
+            console.log('In extract', file);
             if (file.indexOf('.zip') === -1) {
                 reject(new Error('File must be stored as a .zip'));
             }
