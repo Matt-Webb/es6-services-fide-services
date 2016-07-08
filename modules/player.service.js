@@ -36,7 +36,6 @@ class FidePlayerService {
         const that = this;
         return new Promise(function(fulfill, reject) {
 
-            console.log('In extract', file);
             if (file.indexOf('.zip') === -1) {
                 reject(new Error('File must be stored as a .zip'));
             }
@@ -45,14 +44,16 @@ class FidePlayerService {
             let zipEntries = zip.getEntries();
 
             zipEntries.forEach(function(zipEntry) {
-                if (zipEntry.entryName === that.fide.txtFile) {
+                if (zipEntry.entryName === that.fide.xmlFile) {
                     try {
-                        zip.extractEntryTo(that.fide.txtFile, that.fide.folder, false, true);
+                        console.log('extracting file!');
+                        zip.extractEntryTo(that.fide.xmlFile, that.fide.folder, false, true);
                         fulfill('Extract complete.');
                     } catch (err) {
                         reject(new Error(err));
                     }
                 } else {
+                    console.log('error!!');
                     reject(new Error('Unable to match file'));
                 }
             });

@@ -2,7 +2,9 @@
 const config = require('./config/app');
 const moment = require('moment');
 const FidePlayerService = require('./modules/player.service');
+const FirebaseService = require('./modules/firebase.service');
 const Players = new FidePlayerService(config);
+const FirebaseDb = new FirebaseService(config);
 
 
 function startProcess() {
@@ -25,6 +27,10 @@ function extract(file) {
     return Players.extract(file);
 }
 
+function addPlayers() {
+    return FirebaseDb.updateAll();
+}
+
 function finish(data) {
     console.log(data);
     process.exit();
@@ -38,4 +44,5 @@ function error(data) {
 startProcess()
     .then(download, error)
     .then(extract, error)
+    .then(addPlayers, error)
     .then(finish);
