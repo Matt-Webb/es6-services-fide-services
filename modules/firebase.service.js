@@ -11,14 +11,14 @@ class FirebasePlayerService {
         this.properties = properties;
         this.firebase = firebase.initializeApp({
             databaseURL: properties.db.firebase.databaseURL,
-            serviceAccount: properyies.db.firebase.serviceAccount
+            serviceAccount: properties.db.firebase.serviceAccount
         });
         this.db = this.firebase.database();
     }
 
     updateAll() {
 
-        const reader = bigXml.createReader(this.properties.folder + this.properties.xmlFire, /^(player)$/, {
+        const reader = bigXml.createReader(this.properties.db.fide.folder + this.properties.db.fide.xmlFile, /^(player)$/, {
             gzip: false
         });
 
@@ -26,14 +26,9 @@ class FirebasePlayerService {
 
         return new Promise(function(fulfill, reject) {
 
-                let counter = 0;
+            let counter = 0;
 
-                reader.on('record', function(record) {
-
-                    if (counter > 10) {
-                        fulfill('complete');
-                        return;
-                    }
+            reader.on('record', function(record) {
 
                     let p = record.children;
                     let player = {};
@@ -56,39 +51,35 @@ class FirebasePlayerService {
                         flag: p[12].text || ""
                     };
 
-                    if (player) {
-                        try {
-                            ref.update(player, function(error) {
-                                if (error) {
-                                    console.log('An error occurred', error);
-                                } else {
-                                    if (counter % 1000 === 0) {
-                                        console.log('!---------------------- records:' + counter);
-                                    }
-                                    counter += 1;
+                    try {
+                        ref.update(player, function(error) {
+                            if (error) {
+                                console.log('An error occurred', error);
+                                counter += 1;
+                            } else {
+                                if (counter % 1000 === 0) {
+                                    console.log('!---------------------- records:' + counter);
                                 }
-                            });
-                        } catch (e) {
-                            console.log('try catch error', e);
-                        }
+                                counter += 1;
 
-                    } else {
-                        console.log('Error, player has no name!');
+                                if (counter > 10) {
+                                    fulfill('complete');
+                                    return;
+                                }
+                            }
+                        });
+
+                    } catch (e) {
+                        console.log('try catch error', e);
                     }
-                }).on('end', function() {
+                })
+                .on('end', function() {
                     console.log('FINISHED!');
                     console.timeEnd();
                     fulfill('Complete!');
                 });
-            }
-        }
-
-        deleteRecord(id) {
-
-        }
-        updatePlayerById(id) {
-
-        }
+        });
     }
+}
 
-    module.exports = FirebasePlayerService;
+module.exports = FirebasePlayerService;

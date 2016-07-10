@@ -48,6 +48,7 @@ class FidePlayerService {
                     try {
                         console.log('extracting file!');
                         zip.extractEntryTo(that.fide.xmlFile, that.fide.folder, false, true);
+                        console.log('extract complete');
                         fulfill('Extract complete.');
                     } catch (err) {
                         reject(new Error(err));

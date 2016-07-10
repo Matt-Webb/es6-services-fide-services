@@ -3,7 +3,7 @@
 module.exports = {
     db: {
         firebase: {
-            databaseURL: 'https://myrating.firebaseio.com/',
+            databaseURL: 'https://mychessrating.firebaseio.com/',
             serviceAccount: './secure/mychessrating-35b25418f350.json'
         },
         fide: {

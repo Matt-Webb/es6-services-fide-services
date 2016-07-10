@@ -41,8 +41,10 @@ function error(data) {
     process.exit();
 }
 
-startProcess()
-    .then(download, error)
-    .then(extract, error)
-    .then(addPlayers, error)
-    .then(finish);
+// startProcess()
+//     .then(download, error)
+//     .then(extract, error)
+//     .then(addPlayers, error)
+//     .then(finish);
+
+addPlayers().then(finish, error);
