@@ -28,7 +28,12 @@ function extract(file) {
 }
 
 function addPlayers() {
+    console.log('adding players service called!');
     return FirebaseDb.updateAll();
+}
+
+function queryPlayer() {
+    return FirebaseDb.query(40);
 }
 
 function finish(data) {
@@ -47,4 +52,5 @@ function error(data) {
 //     .then(addPlayers, error)
 //     .then(finish);
 
-addPlayers().then(finish, error);
+//addPlayers().then(finish, error);
+queryPlayer();

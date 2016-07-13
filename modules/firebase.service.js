@@ -22,11 +22,9 @@ class FirebasePlayerService {
             gzip: false
         });
 
-        const ref = this.db.ref("players-test");
+        const ref = this.db.ref("players");
 
         return new Promise(function(fulfill, reject) {
-
-            let counter = 0;
 
             reader.on('record', function(record) {
 
@@ -36,49 +34,48 @@ class FirebasePlayerService {
                     // below we create a dynamic key using an object literal obj['name'], this allows use to use
                     // the fide id as the firebase reference id.
                     player[p[0].text] = {
-                        id: parseInt(p[0].text, 10) || "",
-                        name: p[1].text || "",
-                        country: p[2].text || "",
-                        sex: p[3].text || "",
-                        title: p[4].text || "",
-                        w_title: p[5].text || "",
-                        o_title: p[6].text || "",
-                        foa_title: p[7].text || "",
-                        rating: parseInt(p[8].text, 10) || "",
-                        games: p[9].text || "",
-                        k: parseInt(p[10].text, 10) || "",
-                        birthday: parseInt(p[11].text, 10) || "",
-                        flag: p[12].text || ""
+                        id: parseInt(p[0].text, 10) || null,
+                        name: p[1].text || null,
+                        country: p[2].text || null,
+                        sex: p[3].text || null,
+                        title: p[4].text || null,
+                        womens_title: p[5].text || null,
+                        online_title: p[6].text || null,
+                        foa_title: p[7].text || null,
+                        rating: parseInt(p[8].text, 10) || null,
+                        games: parseInt(p[9].text) || null,
+                        k_factor: parseInt(p[10].text, 10) || null,
+                        birth_year: parseInt(p[11].text, 10) || null,
+                        flag: p[12].text || null
                     };
 
                     try {
-                        ref.update(player, function(error) {
-                            if (error) {
-                                console.log('An error occurred', error);
-                                counter += 1;
-                            } else {
-                                if (counter % 1000 === 0) {
-                                    console.log('!---------------------- records:' + counter);
+                        if(player[p[0].text].rating !== null && player[p[0].text].name !== null && player[p[0].text].country === 'ENG') {
+                            ref.update(player, function(error) {
+                                if (error) {
+                                    console.log('An error occurred', error);
                                 }
-                                counter += 1;
-
-                                if (counter > 10) {
-                                    fulfill('complete');
-                                    return;
-                                }
-                            }
-                        });
-
-                    } catch (e) {
-                        console.log('try catch error', e);
+                            });
+                        }
+                    } catch (error) {
+                        console.log('try catch error', error);
                     }
                 })
                 .on('end', function() {
                     console.log('FINISHED!');
-                    console.timeEnd();
                     fulfill('Complete!');
                 });
         });
+    }
+
+    query(k_factor) {
+
+        let ref = this.db.ref('players');
+
+        ref.orderByChild("rating").limitToFirst(25).once("value", function(snapshot) {
+            console.log(snapshot.val());
+        });
+
     }
 }
 
