@@ -22,7 +22,7 @@ class FirebasePlayerService {
             gzip: false
         });
 
-        const ref = this.db.ref("players");
+        const ref = this.db.ref('players');
 
         return new Promise(function(fulfill, reject) {
 
@@ -50,7 +50,7 @@ class FirebasePlayerService {
                     };
 
                     try {
-                        if(player[p[0].text].rating !== null && player[p[0].text].name !== null && player[p[0].text].country === 'ENG') {
+                        if (player[p[0].text].rating !== null && player[p[0].text].name !== null && player[p[0].text].country === 'ENG') {
                             ref.update(player, function(error) {
                                 if (error) {
                                     console.log('An error occurred', error);
@@ -68,14 +68,27 @@ class FirebasePlayerService {
         });
     }
 
-    query(k_factor) {
+    query(child, limit) {
 
         let ref = this.db.ref('players');
+        let items = [];
 
-        ref.orderByChild("rating").limitToFirst(25).once("value", function(snapshot) {
-            console.log(snapshot.val());
+        return new Promise(function(fulfill, reject) {
+            if (typeof child === 'string' && typeof limit === 'number') {
+                ref.orderByChild(child).limitToLast(limit).once("value", function(snapshot) {
+                    snapshot.forEach(function(childSnapshot) {
+                        items.push(childSnapshot.val());
+                    });
+                }).then(function() {
+                    fulfill(items.reverse());
+                }, function(error) {
+                    reject(new Error(error));
+                });
+
+            } else {
+                reject(new Error('Parameters passed are not of valid types'));
+            }
         });
-
     }
 }
 

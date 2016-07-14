@@ -7,6 +7,13 @@ const Players = new FidePlayerService(config);
 const FirebaseDb = new FirebaseService(config);
 
 
+let flags = {
+    start: true,
+    download: true,
+    extract: true,
+    add: true
+}
+
 function startProcess() {
         return new Promise(function(fulfill, reject) {
             try {
@@ -28,12 +35,11 @@ function extract(file) {
 }
 
 function addPlayers() {
-    console.log('adding players service called!');
     return FirebaseDb.updateAll();
 }
 
-function queryPlayer() {
-    return FirebaseDb.query(40);
+function queryPlayer(child, limit) {
+    return FirebaseDb.query(child, limit);
 }
 
 function finish(data) {
@@ -53,4 +59,5 @@ function error(data) {
 //     .then(finish);
 
 //addPlayers().then(finish, error);
-queryPlayer();
+
+queryPlayer('rating', 10).then(finish, error);
