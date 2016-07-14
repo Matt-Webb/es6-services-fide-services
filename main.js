@@ -1,11 +1,13 @@
 'use strict';
+
 const config = require('./config/app');
 const moment = require('moment');
 const FidePlayerService = require('./modules/player.service');
 const FirebaseService = require('./modules/firebase.service');
+const RatingService = require('./modules/rating.service');
 const Players = new FidePlayerService(config);
 const FirebaseDb = new FirebaseService(config);
-
+const Rating = new RatingService();
 
 let flags = {
     start: true,
@@ -42,6 +44,10 @@ function queryPlayer(child, limit) {
     return FirebaseDb.query(child, limit);
 }
 
+function playerById(id) {
+    return FirebaseDb.playerById(id);
+}
+
 function finish(data) {
     console.log(data);
     process.exit();
@@ -52,12 +58,22 @@ function error(data) {
     process.exit();
 }
 
-// startProcess()
-//     .then(download, error)
-//     .then(extract, error)
-//     .then(addPlayers, error)
-//     .then(finish);
+//startProcess()
+//    .then(download, error)
+//    .then(extract, error)
+//    .then(addPlayers, error)
+//    .then(finish);
 
 //addPlayers().then(finish, error);
 
-queryPlayer('rating', 10).then(finish, error);
+//queryPlayer('rating', 10).then(finish, error);
+
+playerById(418250).then(function(data) {
+
+    let info = Rating.elo(data.rating,2700,data.k_factor,1);
+
+    console.log('Result:');
+    console.log(data.name);
+    console.log(info.change);
+
+}, error);

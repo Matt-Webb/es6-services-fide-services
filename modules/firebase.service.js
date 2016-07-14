@@ -1,4 +1,5 @@
 'use strict';
+
 const firebase = require('firebase');
 const fs = require('fs');
 const readline = require('readline');
@@ -60,9 +61,7 @@ class FirebasePlayerService {
                     } catch (error) {
                         console.log('try catch error', error);
                     }
-                })
-                .on('end', function() {
-                    console.log('FINISHED!');
+                }).on('end', function() {
                     fulfill('Complete!');
                 });
         });
@@ -70,12 +69,12 @@ class FirebasePlayerService {
 
     query(child, limit) {
 
-        let ref = this.db.ref('players');
+        const ref = this.db.ref('players');
         let items = [];
 
         return new Promise(function(fulfill, reject) {
             if (typeof child === 'string' && typeof limit === 'number') {
-                ref.orderByChild(child).limitToLast(limit).once("value", function(snapshot) {
+                ref.orderByChild(child).limitToLast(limit).once('value', function(snapshot) {
                     snapshot.forEach(function(childSnapshot) {
                         items.push(childSnapshot.val());
                     });
@@ -89,6 +88,23 @@ class FirebasePlayerService {
                 reject(new Error('Parameters passed are not of valid types'));
             }
         });
+    }
+
+    playerById(id) {
+
+        const ref = this.db.ref('players/' + id);
+        let player;
+
+        return new Promise(function(fulfill, reject) {
+            ref.once('value', function(snapshot) {
+                player = snapshot.val();
+            }, function(error) {
+                reject(new Error(error));
+            }).then(function() {
+                fulfill(player);
+            });
+        });
+
     }
 }
 

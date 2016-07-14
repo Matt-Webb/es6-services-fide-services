@@ -22,11 +22,11 @@ class FidePlayerService {
                         file.close();
                         fulfill(fileName);
                     });
-                }).on('error', function(err) {
+                }).on('error', function(error) {
                     fs.unlink(that.fide.folder);
-                    reject(new Error(err));
+                    reject(new Error(error));
                 });
-            } catch (err) {
+            } catch (error) {
                 reject(new Error(err));
             }
         });
@@ -46,15 +46,12 @@ class FidePlayerService {
             zipEntries.forEach(function(zipEntry) {
                 if (zipEntry.entryName === that.fide.xmlFile) {
                     try {
-                        console.log('extracting file!');
                         zip.extractEntryTo(that.fide.xmlFile, that.fide.folder, false, true);
-                        console.log('extract complete');
                         fulfill('Extract complete.');
-                    } catch (err) {
-                        reject(new Error(err));
+                    } catch (error) {
+                        reject(new Error(error));
                     }
                 } else {
-                    console.log('error!!');
                     reject(new Error('Unable to match file'));
                 }
             });
