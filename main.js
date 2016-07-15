@@ -9,71 +9,67 @@ const Players = new FidePlayerService(config);
 const FirebaseDb = new FirebaseService(config);
 const Rating = new RatingService();
 
-let flags = {
-    start: true,
-    download: true,
-    extract: true,
-    add: true
-}
 
-function startProcess() {
+module.exports = function() {
+
+    function startProcess() {
         return new Promise(function(fulfill, reject) {
-            try {
-                let fileName = 'fide-players-' + moment().format('DD-MM-YY') + '.zip';
-                console.log('created file name with current date / time.');
-                fulfill(fileName);
-            } catch (err) {
-                reject(new Error(err));
-            }
+            const fileName = 'fide-players-' + moment().format('DD-MM-YY') + '.zip';
+            fulfill(fileName);
         });
+    }
+
+    function download(file) {
+        return Players.download(file);
+    }
+
+    function extract(file) {
+        return Players.extract(file);
+    }
+
+    function addPlayers(fileName) {
+        return FirebaseDb.createAll(fileName);
+    }
+
+    function updatePlayerRatings(fileName) {
+        console.log('Update initiated!');
+        return FirebaseDb.updateRatings(fileName)
+    }
+
+    function queryPlayer(child, limit) {
+        return FirebaseDb.query(child, limit);
+    }
+
+    const playerById = function(id) {
+        return FirebaseDb.playerById(id);
+    }
+
+    function finish(data) {
+        console.log(data);
+        process.exit();
+    }
+
+    function error(data) {
+        console.log(data.Error);
+        process.exit();
+    }
+
+    return {
+        startProcess: startProcess,
+        download: download,
+        extract: extract,
+        addPlayers: addPlayers,
+        updatePlayerRatings: updatePlayerRatings,
+        queryPlayer: queryPlayer,
+        playerById: playerById
+    };
 }
 
-function download(file) {
-    return Players.download(file);
-}
 
-function extract(file) {
-    return Players.extract(file);
-}
 
-function addPlayers() {
-    return FirebaseDb.updateAll();
-}
 
-function queryPlayer(child, limit) {
-    return FirebaseDb.query(child, limit);
-}
-
-function playerById(id) {
-    return FirebaseDb.playerById(id);
-}
-
-function finish(data) {
-    console.log(data);
-    process.exit();
-}
-
-function error(data) {
-    console.log(data.Error);
-    process.exit();
-}
-
-//startProcess()
-//    .then(download, error)
-//    .then(extract, error)
-//    .then(addPlayers, error)
-//    .then(finish);
-
-//addPlayers().then(finish, error);
-
-//queryPlayer('rating', 10).then(finish, error);
-
-playerById(418250).then(function(data) {
-
-    let info = Rating.elo(data.rating,1967,data.k_factor,0);
-
-    console.log('Result:');
-    console.log(data.name);
-    console.log(info.change);
-
-}, error);
+// startProcess()
+//     .then(addPlayers, error)
+//     .then(updatePlayerRatings, error)
+//     .then(updatePlayerRatings, error)
+//     .then(finish, error);

@@ -39,7 +39,7 @@ download().then(extract).then(function() {
 
 ### FirebaseDb
 
-A defined list of methods have been written are wrappers around the `Firebase API`, this enable a clean and readable set of functions to be called. Examples:
+A defined list of methods have been written as a wrapper around the `Firebase API`, this enable a clean and readable set of functions to be called. Examples:
 
 ```
 const FirebaseDb = new FirebaseService(config);

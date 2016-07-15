@@ -1,9 +1,5 @@
 'use strict';
-
 const firebase = require('firebase');
-const fs = require('fs');
-const readline = require('readline');
-const stream = require('stream');
 const bigXml = require('big-xml');
 
 class FirebasePlayerService {
@@ -17,59 +13,124 @@ class FirebasePlayerService {
         this.db = this.firebase.database();
     }
 
-    updateAll() {
+    /**
+     * This creates all the initial player records within firebase, without a rating reference.
+     * @callback createAll
+     * @param {string} fileName
+     */
+    createAll(fileName) {
 
+        console.log('Creating all players!');
+        const that = this;
         const reader = bigXml.createReader(this.properties.db.fide.folder + this.properties.db.fide.xmlFile, /^(player)$/, {
             gzip: false
         });
 
-        const ref = this.db.ref('players');
+        const currentProcess = Date.now();
+        const ref = that.db.ref('players/');
 
         return new Promise(function(fulfill, reject) {
 
             reader.on('record', function(record) {
 
-                    let p = record.children;
-                    let player = {};
+                let p = record.children;
+                let player = {};
 
-                    // below we create a dynamic key using an object literal obj['name'], this allows use to use
-                    // the fide id as the firebase reference id.
-                    player[p[0].text] = {
-                        id: parseInt(p[0].text, 10) || null,
-                        name: p[1].text || null,
-                        country: p[2].text || null,
-                        sex: p[3].text || null,
-                        title: p[4].text || null,
-                        womens_title: p[5].text || null,
-                        online_title: p[6].text || null,
-                        foa_title: p[7].text || null,
-                        rating: parseInt(p[8].text, 10) || null,
-                        games: parseInt(p[9].text) || null,
-                        k_factor: parseInt(p[10].text, 10) || null,
-                        birth_year: parseInt(p[11].text, 10) || null,
-                        flag: p[12].text || null
-                    };
+                // below we create a dynamic key using an object literal obj['name'], this allows use to use
+                // the fide id as the firebase reference id.
+                player[p[0].text] = {
+                    id: parseInt(p[0].text, 10) || null,
+                    name: p[1].text || null,
+                    country: p[2].text || null,
+                    sex: p[3].text || null,
+                    title: p[4].text || null,
+                    womens_title: p[5].text || null,
+                    online_title: p[6].text || null,
+                    foa_title: p[7].text || null,
+                    games: parseInt(p[9].text) || null,
+                    k_factor: parseInt(p[10].text, 10) || null,
+                    birth_year: parseInt(p[17].text, 10) || null,
+                    flag: p[18].text || null
+                };
 
-                    try {
-                        if (player[p[0].text].rating !== null && player[p[0].text].name !== null && player[p[0].text].country === 'ENG') {
-                            ref.update(player, function(error) {
-                                if (error) {
-                                    console.log('An error occurred', error);
-                                }
-                            });
-                        }
-                    } catch (error) {
-                        console.log('try catch error', error);
+                try {
+                    if (player[p[0].text].rating !== null && player[p[0].text].name !== null && player[p[0].text].country === 'ENG') {
+                        ref.update(player, function(error) {
+                            if (error) {
+                                reject(new Error(error));
+                            }
+                        });
                     }
-                }).on('end', function() {
-                    fulfill('Complete!');
-                });
+                } catch (error) {
+                    reject(new Error(error));
+                }
+            }).on('end', function() {
+                fulfill('Complete!');
+            });
         });
     }
 
+    /**
+     * This will update each rating record by populating the ratingHistory object property.
+     * @callback updateRatings
+     * @param {string} fileName
+     */
+    updateRatings(fileName) {
+
+        console.log('Updating all player ratings!');
+        const that = this;
+        const currentProcess = Date.now();
+        const reader = bigXml.createReader(that.properties.db.fide.folder + that.properties.db.fide.xmlFile, /^(player)$/, {
+            gzip: false
+        });
+
+        return new Promise(function(fulfill, reject) {
+
+            reader.on('record', function(record) {
+
+                let refRating;
+                let player = record.children;
+
+                if (player[2].text === 'ENG') {
+
+                    try {
+                        refRating = that.db.ref('players/' + p[0].text + '/ratingHistory');
+                    } catch (error) {
+                        reject(new Error(error));
+                    }
+
+                    let rating = {
+                        rating: parseInt(player[8].text, 10) || null,
+                        fromFile: fileName,
+                        uploaded: currentProcess
+                    };
+
+                    try {
+                        refRating.push(rating, function(error) {
+                            if (error) {
+                                reject(new Error(error));
+                            }
+                        });
+                    } catch (error) {
+                        reject(new Error(error));
+                    }
+                }
+            }).on('end', function() {
+                fulfill('Complete!');
+            });
+        });
+    }
+
+    /**
+     * A query wrapper for returning a list of ratings order by {country}, {title}, {age}, {asc/desc}
+     * @callback query
+     * @param {string} child
+     * @param {number} limit
+     */
     query(child, limit) {
 
-        const ref = this.db.ref('players');
+        const that = this;
+        const ref = that.db.ref('players');
         let items = [];
 
         return new Promise(function(fulfill, reject) {
@@ -90,9 +151,15 @@ class FirebasePlayerService {
         });
     }
 
+    /**
+     * Returns a JSON object for an individual player.
+     * @callback playerById
+     * @param {number} id
+     */
     playerById(id) {
 
-        const ref = this.db.ref('players/' + id);
+        const that = this;
+        const ref = that.db.ref('players/' + id);
         let player;
 
         return new Promise(function(fulfill, reject) {
