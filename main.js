@@ -70,7 +70,7 @@ function error(data) {
 
 playerById(418250).then(function(data) {
 
-    let info = Rating.elo(data.rating,2700,data.k_factor,1);
+    let info = Rating.elo(data.rating,1967,data.k_factor,0);
 
     console.log('Result:');
     console.log(data.name);
