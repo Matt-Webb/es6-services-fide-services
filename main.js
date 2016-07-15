@@ -40,7 +40,7 @@ module.exports = function() {
         return FirebaseDb.query(child, limit);
     }
 
-    const playerById = function(id) {
+    function playerById(id) {
         return FirebaseDb.playerById(id);
     }
 

@@ -12,6 +12,8 @@ app.use(bodyParser.json());
 app.get('/api/player/:id', function(req, res) {
     service.playerById(req.params.id).then(function(data) {
         res.send(data);
+    }, function(error) {
+        res.status(404).send(error);
     })
 });
 
