@@ -65,9 +65,6 @@ module.exports = function() {
     };
 }
 
-
-
-
 // startProcess()
 //     .then(addPlayers, error)
 //     .then(updatePlayerRatings, error)

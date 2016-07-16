@@ -20,7 +20,7 @@ class  RatingService {
         const _pR = parseInt(playerRating, 10);
         const _oR = parseInt(opponentRating, 10);
         const _k = parseInt(kFactor, 10);
-        const _r = parseInt(result, 10);
+        const _r = parseFloat(result, 10);
 
         const transformPR = Math.pow(10, (_pR / 400));
         const transformOR = Math.pow(10, (_oR / 400));
