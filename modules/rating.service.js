@@ -3,9 +3,7 @@
 
 class  RatingService {
 
-    constructor() {
-
-    }
+    constructor() { }
 
     /**
      * This function calculates the change and new rating of a result between two elo rated players.
@@ -51,7 +49,7 @@ class  RatingService {
     ecf(playerGrade, opponentGrade, result) {
 
         const cutoff = 40;
-        const diff = (playerGrade - opponentGrade); // -20
+        const diff = (playerGrade - opponentGrade);
 
         if(diff > cutoff) {
             opponentGrade = (playerGrade + cutoff);

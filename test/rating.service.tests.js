@@ -21,7 +21,7 @@ describe('Rating Service', function() {
         it('should return the grade 250 when passed the parameters: 180, 200, 1 {win}', function() {
             assert.equal(250, Rating.ecf(180,200, 1));
         });
-        it('should return the grade 250 when passed the parameters: 180, 200, 0 {loss}', function() {
+        it('should return the grade 150 when passed the parameters: 180, 200, 0 {loss}', function() {
             assert.equal(150, Rating.ecf(180,200, 0));
         });
         it('should return the grade 200 when passed the parameters: 180, 200, 0.5 {draw}', function() {
@@ -32,13 +32,13 @@ describe('Rating Service', function() {
     describe('Convert ECF Grade to ELO Rating', function() {
         it('should return the elo rating 2200 when given the ecf grade 200', function() {
             assert.equal(2200, Rating.convertToElo(200));
-        })
+        });
     });
 
     describe('Convert ELO Rating to ECF Grade', function() {
         it('should return the ecf grade 200 when give the elo rating 2200', function() {
             assert.equal(200, Rating.convertToEcf(2200));
-        })
+        });
     });
 
 })

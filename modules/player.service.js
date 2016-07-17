@@ -11,6 +11,11 @@ class FidePlayerService {
         this.fide = properties.db.fide;
     }
 
+    /**
+     * This method does a http GET request to the fide download page for a zip XML data file.
+     * @return {promise}
+     * @param {string} fileName
+     */
     download(fileName) {
         const that = this;
         return new Promise(function(fulfill, reject) {
@@ -32,6 +37,11 @@ class FidePlayerService {
         });
     }
 
+    /**
+     * This method takes a .zip file and unzips it to the same folder.
+     * @return {promise}
+     * @param {string} file
+     */
     extract(file) {
         const that = this;
         return new Promise(function(fulfill, reject) {

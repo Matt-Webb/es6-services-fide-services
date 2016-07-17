@@ -20,7 +20,6 @@ class FirebasePlayerService {
      */
     createAll(fileName) {
 
-        console.log('Creating all players!');
         const that = this;
         const reader = bigXml.createReader(this.properties.db.fide.folder + this.properties.db.fide.xmlFile, /^(player)$/, {
             gzip: false
@@ -65,7 +64,7 @@ class FirebasePlayerService {
                     reject(new Error(error));
                 }
             }).on('end', function() {
-                fulfill('Complete!');
+                fulfill(fileName);
             });
         });
     }
@@ -77,7 +76,6 @@ class FirebasePlayerService {
      */
     updateRatings(fileName) {
 
-        console.log('Updating all player ratings!');
         const that = this;
         const currentProcess = Date.now();
         const reader = bigXml.createReader(that.properties.db.fide.folder + that.properties.db.fide.xmlFile, /^(player)$/, {
@@ -116,7 +114,7 @@ class FirebasePlayerService {
                     }
                 }
             }).on('end', function() {
-                fulfill('Complete!');
+                fulfill(fileName);
             });
         });
     }
