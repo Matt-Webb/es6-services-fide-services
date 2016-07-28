@@ -11,5 +11,28 @@ module.exports = {
             folder: './data/',
             xmlFile: 'players_list_xml_foa.xml'
         }
+    },
+    cron : "/1 * * * * *",
+    logger : {
+      appenders: [
+        {
+          type: "console"
+        },
+        {
+          type: "file",
+          filename: "./log/app.log",
+          maxLogSize: 20480,
+          backups: 3,
+          category : "app"
+        },
+        {
+          type: "logLevelFilter",
+          level: "ERROR",
+          appender: {
+            type: "file",
+            filename: "./log/errors.log"
+          }
+        }
+      ]
     }
 };

@@ -41,4 +41,4 @@ class ScheduleService {
     }
 }
 
-module.exports = ReportSchedule;
+module.exports = ScheduleService;
