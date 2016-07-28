@@ -1,10 +1,46 @@
 # Chess Player - Rating Manager
 
-The aim of this project is to import the `FIDE` rated player list into a `Firebase` database _(500k+ records)_. This will provide a configurable schedule for recursive downloads, a historic record will be kept to monitor existing player ratings all held within `Firebase`.
+The aim of this project is to import the `FIDE` rated player list into multiple `Firebase` collections _(500k+ records)_. As each rating list is published, a configurable schedule for recursive downloads is provided, this enables a historic record to be kept to monitor new and existing ratings changes.
 
-**note** This project is still under active development and is current _unstable_ if you would like to contribute to this project, please contact me at matt.d.webb [@] icloud.com.
+Beyond this each `Firebase` collection will be wrapped in a light weight API using the standard Firebase query conventions in order to retrieve player data.
 
-This project is created with the following coding standards
+In summary, this project should aid anyone who wishes to build an application for mobile & desktop allowing them to quickly and easily access official FIDE rated player data.
+
+**Note** This project is under active development and is currently considered _unstable_ if you would like to contribute to this project, please contact me at matt.d.webb [@] icloud.com
+
+### Project Details
+    * JavaScript
+        * ES6
+        * Node Js
+        * Common Js
+        * Gulp
+
+### Getting Started
+
+Clone the repository
+```
+$ git clone https://github.com/Matt-Webb/firebase-es6-angular-fide-players.git
+```
+
+Install dependancies
+```
+$ npm install
+```
+
+Update config
+    * Create your own Firebase Database
+    * Add Firebase Credentials
+    * Configure Schedule (see cron string settings)
+
+Run Schedule
+```
+$ npm start
+```
+
+Run Tests
+```
+$ npm test
+```  
 
 ## SERVER SIDE
 
