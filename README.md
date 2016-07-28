@@ -10,7 +10,30 @@ This project is created with the following coding standards
 
 ### Schedule
 
-Under Development.
+Reference the Schedule Service:
+```
+const ScheduleService = require( './modules/schedule.service' );
+```
+
+Instantiate instance of Schedule (passing in the appropriate config):
+```
+const schedule = new ScheduleService( config );
+```
+
+Example Config:
+```
+{ cron : "/1 * * * * *" }
+```
+
+Start your schedule:
+```
+schedule.start( scheduleJob );
+```
+
+Terminate your schedule:
+```
+schedule.stop( /* optional callback */ );
+```
 
 ### Download
 
@@ -36,7 +59,7 @@ download().then(extract).then(success,error);
 
 ### FirebaseDb
 
-A defined list of methods have been written as a wrapper around the `Firebase API`, this enable a clean and readable set of functions to be called. 
+A defined list of methods have been written as a wrapper around the `Firebase API`, this enable a clean and readable set of functions to be called.
 Examples:
 ```
 const FirebaseDb = new FirebaseService(config);
@@ -48,5 +71,3 @@ playerById(418250).then(function(data) {
     console.log('Player returned:' + data.name);
 }, error);
 ```
-
-
