@@ -17,4 +17,23 @@ app.get('/api/player/:id', function(req, res) {
     })
 });
 
+// app.post('/api/upload/:fileName', function(req, res) {
+//     service.updatePlayerRatings(req.params.fileName).then(function(data) {
+//         res.send(data);
+//     }, function(error) {
+//         res.status(500).send(error);
+//     })
+// });
+//
+// app.get('/api/download/:file', function(req, res) {
+//     service.startProcess()
+//         .then(service.download)
+//         .then(service.extract)
+//         .then(function(data) {
+//             res.send(data);
+//         }, function(error){
+//             res.status(404).send(error);
+//         });
+// });
+
 app.listen(port);

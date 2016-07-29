@@ -1,36 +1,38 @@
 'use strict';
-const firebase = require('firebase');
-const bigXml = require('big-xml');
+
+const firebase = require( 'firebase' );
+const bigXml = require( 'big-xml' );
+const log = require( './logger.service' );
 
 class FirebasePlayerService {
 
-    constructor(properties) {
+    constructor( properties ) {
         this.properties = properties;
-        this.firebase = firebase.initializeApp({
+        this.firebase = firebase.initializeApp( {
             databaseURL: properties.db.firebase.databaseURL,
             serviceAccount: properties.db.firebase.serviceAccount
-        });
+        } );
         this.db = this.firebase.database();
     }
 
     /**
      * This creates all the initial player records within firebase, without a rating reference.
      * @callback createAll
-     * @param {string} fileName
+     * @param { string } fileName
      */
-    createAll(fileName) {
+    createAll( fileName ) {
 
         const that = this;
-        const reader = bigXml.createReader(this.properties.db.fide.folder + this.properties.db.fide.xmlFile, /^(player)$/, {
+        const reader = bigXml.createReader( this.properties.db.fide.folder + this.properties.db.fide.xmlFile, /^(player)$/, {
             gzip: false
-        });
+        }) ;
 
         const currentProcess = Date.now();
-        const ref = that.db.ref('players/');
+        const ref = that.db.ref( 'players/' );
 
-        return new Promise(function(fulfill, reject) {
+        return new Promise( function( fulfill, reject ) {
 
-            reader.on('record', function(record) {
+            reader.on( 'record', function( record ) {
 
                 let p = record.children;
                 let player = {};
@@ -53,98 +55,100 @@ class FirebasePlayerService {
                 };
 
                 try {
-                    if (player[p[0].text].rating !== null && player[p[0].text].name !== null && player[p[0].text].country === 'ENG') {
-                        ref.update(player, function(error) {
-                            if (error) {
-                                reject(new Error(error));
+                    if ( player[p[0].text].rating !== null && player[p[0].text].name !== null && player[p[0].text].country === 'ENG') {
+                        ref.update( player, function( error ) {
+                            if ( error ) {
+                                reject( new Error( error ) );
                             }
                         });
                     }
-                } catch (error) {
-                    reject(new Error(error));
+                } catch ( error ) {
+                    reject( new Error( error ) );
                 }
-            }).on('end', function() {
-                fulfill(fileName);
-            });
-        });
+            } ).on( 'end', function() {
+                fulfill( fileName );
+            } );
+        } );
     }
 
     /**
      * This will update each rating record by populating the ratingHistory object property.
      * @callback updateRatings
-     * @param {string} fileName
+     * @param { string } fileName
      */
-    updateRatings(fileName) {
+    updateRatings( fileName ) {
 
         const that = this;
         const currentProcess = Date.now();
-        const reader = bigXml.createReader(that.properties.db.fide.folder + that.properties.db.fide.xmlFile, /^(player)$/, {
+        const reader = bigXml.createReader( that.properties.db.fide.folder + that.properties.db.fide.xmlFile, /^(player)$/, {
             gzip: false
-        });
+        } );
 
-        return new Promise(function(fulfill, reject) {
+        return new Promise( function( fulfill, reject ) {
 
-            reader.on('record', function(record) {
+            reader.on( 'record', function( record ) {
 
                 let refRating;
                 let player = record.children;
 
-                if (player[2].text === 'ENG') {
+                if ( player[2].text === 'ENG' ) {
 
                     try {
-                        refRating = that.db.ref('players/' + p[0].text + '/ratingHistory');
-                    } catch (error) {
-                        reject(new Error(error));
+                        refRating = that.db.ref( 'players/' + p[0].text + '/ratingHistory' );
+                    } catch ( error ) {
+                        reject( new Error( error ) );
                     }
 
                     let rating = {
-                        rating: parseInt(player[8].text, 10) || null,
+                        rating: parseInt( player[8].text, 10 ) || null,
                         fromFile: fileName,
                         uploaded: currentProcess
                     };
 
                     try {
-                        refRating.push(rating, function(error) {
-                            if (error) {
-                                reject(new Error(error));
+                        refRating.push( rating, function( error ) {
+                            if ( error ) {
+                                reject( new Error( error ) );
+                            } else {
+                                log.trace( 'Player Updated', player[1].text, player[8].text, player[2].text );
                             }
                         });
-                    } catch (error) {
-                        reject(new Error(error));
+                    } catch ( error ) {
+                        reject( new Error( error ) );
                     }
                 }
-            }).on('end', function() {
-                fulfill(fileName);
-            });
-        });
+            } ).on( 'end', function() {
+                fulfill( fileName );
+            } );
+        } );
     }
 
     /**
      * A query wrapper for returning a list of ratings order by {country}, {title}, {age}, {asc/desc}
      * @callback query
-     * @param {string} child
-     * @param {number} limit
+     * @param { string } child
+     * @param { number } limit
      */
-    query(child, limit) {
+    query( child, limit ) {
 
         const that = this;
-        const ref = that.db.ref('players');
+        const ref = that.db.ref( 'players' );
         let items = [];
 
-        return new Promise(function(fulfill, reject) {
-            if (typeof child === 'string' && typeof limit === 'number') {
-                ref.orderByChild(child).limitToLast(limit).once('value', function(snapshot) {
-                    snapshot.forEach(function(childSnapshot) {
-                        items.push(childSnapshot.val());
-                    });
-                }).then(function() {
-                    fulfill(items.reverse());
-                }, function(error) {
-                    reject(new Error(error));
-                });
+        return new Promise( function( fulfill, reject ) {
+            if ( typeof child === 'string' && typeof limit === 'number' ) {
+                ref.orderByChild( child ).limitToLast( limit ).once( 'value', function( snapshot ) {
+                    snapshot.forEach(function( childSnapshot ) {
+                        items.push( childSnapshot.val() );
+                    } );
+                } ).then( function() {
+                    fulfill( items.reverse() );
+                }, function( error ) {
+                    reject( new Error( error ) );
+                } );
 
             } else {
-                reject(new Error('Parameters passed are not of valid types'));
+                reject( new Error('Parameters passed are not of valid types') );
             }
         });
     }
@@ -152,21 +156,21 @@ class FirebasePlayerService {
     /**
      * Returns a JSON object for an individual player.
      * @callback playerById
-     * @param {number} id
+     * @param { number } id
      */
-    playerById(id) {
+    playerById( id ) {
 
         const that = this;
-        const ref = that.db.ref('players/' + id);
+        const ref = that.db.ref( 'players/' + id );
         let player;
 
-        return new Promise(function(fulfill, reject) {
-            ref.once('value', function(snapshot) {
+        return new Promise( function( fulfill, reject ) {
+            ref.once( 'value', function( snapshot ) {
                 player = snapshot.val();
-            }, function(error) {
-                reject(new Error(error));
-            }).then(function() {
-                fulfill(player);
+            }, function( error ) {
+                reject( new Error( error ) );
+            } ).then( function() {
+                fulfill( player );
             });
         });
 
