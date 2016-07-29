@@ -1,5 +1,6 @@
 'use strict';
 
+const moment = require( 'moment' );
 const firebase = require( 'firebase' );
 const bigXml = require( 'big-xml' );
 const log = require( './logger.service' );
@@ -78,6 +79,7 @@ class FirebasePlayerService {
      */
     updateRatings( fileName ) {
 
+        log.info('Updating ratings.');
         const that = this;
         const currentProcess = Date.now();
         const reader = bigXml.createReader( that.properties.db.fide.folder + that.properties.db.fide.xmlFile, /^(player)$/, {
@@ -90,27 +92,32 @@ class FirebasePlayerService {
 
                 let refRating;
                 let player = record.children;
+                let id = parseInt(player[0].text,10);
 
-                if ( player[2].text === 'ENG' ) {
+                if ( id === 418250 ) {
 
-                    try {
-                        refRating = that.db.ref( 'players/' + p[0].text + '/ratingHistory' );
-                    } catch ( error ) {
-                        reject( new Error( error ) );
-                    }
+                    refRating = that.db.ref( 'players/' + id + '/rating' );
 
                     let rating = {
                         rating: parseInt( player[8].text, 10 ) || null,
                         fromFile: fileName,
-                        uploaded: currentProcess
+                        uploaded: currentProcess,
+                        date: moment().format('Do MMM YY')
                     };
 
                     try {
+
+                        if(!refRating) {
+                            reject( new Error( 'Ref Rating is undefined!' ));
+                        }
+
+                        log.trace( 'Player Updated', player[1].text, player[8].text, player[2].text, refRating );
                         refRating.push( rating, function( error ) {
                             if ( error ) {
+                                log.trace( 'Error', error );
                                 reject( new Error( error ) );
                             } else {
-                                log.trace( 'Player Updated', player[1].text, player[8].text, player[2].text );
+                                log.trace( 'Success', player[1].text, player[8].text, player[2].text );
                             }
                         });
                     } catch ( error ) {

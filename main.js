@@ -2,6 +2,7 @@
 
 const config = require('./config/app');
 const moment = require('moment');
+const log = require( './modules/logger.service' );
 const FidePlayerService = require('./modules/player.service');
 const FirebaseService = require('./modules/firebase.service');
 const RatingService = require('./modules/rating.service');
@@ -19,54 +20,47 @@ module.exports = function() {
         });
     }
 
-    function download(file) {
-        return Players.download(file);
+    function download( file ) {
+        return Players.download( file );
     }
 
     function extract(file) {
-        return Players.extract(file);
+        return Players.extract( file );
     }
 
     function addPlayers(fileName) {
-        return FirebaseDb.createAll(fileName);
+        return FirebaseDb.createAll( fileName );
     }
 
-    function updatePlayerRatings(fileName) {
-        console.log('Update initiated!');
-        return FirebaseDb.updateRatings(fileName)
+    function updatePlayerRatings( fileName ) {
+        return FirebaseDb.updateRatings( fileName )
     }
 
-    function queryPlayer(child, limit) {
-        return FirebaseDb.query(child, limit);
+    function queryPlayer( child, limit ) {
+        return FirebaseDb.query( child, limit );
     }
 
-    function playerById(id) {
-        return FirebaseDb.playerById(id);
+    function playerById( id ) {
+        return FirebaseDb.playerById( id );
     }
 
     function finish(data) {
-        console.log(data);
+        log.trace( 'Process Finished', data );
         process.exit();
     }
 
     function error(data) {
-        console.log(data.Error);
+        log.error( 'Process Error', data.Error );
         process.exit();
     }
 
     return {
-        startProcess: startProcess,
-        download: download,
-        extract: extract,
-        addPlayers: addPlayers,
-        updatePlayerRatings: updatePlayerRatings,
-        queryPlayer: queryPlayer,
-        playerById: playerById
+        startProcess        : startProcess,
+        download            : download,
+        extract             : extract,
+        addPlayers          : addPlayers,
+        updatePlayerRatings : updatePlayerRatings,
+        queryPlayer         : queryPlayer,
+        playerById          : playerById
     };
 }
-
-// startProcess()
-//     .then(addPlayers, error)
-//     .then(updatePlayerRatings, error)
-//     .then(updatePlayerRatings, error)
-//     .then(finish, error);

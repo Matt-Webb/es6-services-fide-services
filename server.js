@@ -5,8 +5,11 @@ const app = express();
 const bodyParser = require('body-parser');
 const port = process.env.PORT || 8080;
 const service = require('./main')();
+const log = require('./modules/logger.service');
 
-app.use(bodyParser.urlencoded({ extended: true}));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 app.use(bodyParser.json());
 
 app.get('/api/player/:id', function(req, res) {
@@ -17,23 +20,31 @@ app.get('/api/player/:id', function(req, res) {
     })
 });
 
-// app.post('/api/upload/:fileName', function(req, res) {
-//     service.updatePlayerRatings(req.params.fileName).then(function(data) {
-//         res.send(data);
-//     }, function(error) {
-//         res.status(500).send(error);
-//     })
-// });
-//
-// app.get('/api/download/:file', function(req, res) {
-//     service.startProcess()
-//         .then(service.download)
-//         .then(service.extract)
-//         .then(function(data) {
-//             res.send(data);
-//         }, function(error){
-//             res.status(404).send(error);
-//         });
-// });
+app.get('/api/upload/:fileName', function(req, res) {
+    service.updatePlayerRatings(req.params.fileName).then(function(data) {
+        res.send(data);
+    }, function(error) {
+        res.status(500).send(error);
+    })
+});
+
+app.get('/api/download/:file', function(req, res) {
+    service.startProcess()
+        .then(service.download)
+        .then(service.extract)
+        .then(function(data) {
+            res.send(data);
+        }, function(error) {
+            res.status(404).send(error);
+        });
+});
 
 app.listen(port);
+log.info('Server started on port', port);
+
+service.updatePlayerRatings('test')
+    .then(function(data) {
+        log.info(data);
+    }, function(error) {
+        log.info(error);
+    });

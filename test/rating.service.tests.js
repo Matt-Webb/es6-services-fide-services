@@ -1,3 +1,4 @@
+'use strict';
 const assert = require('chai').assert;
 const RatingService = require('../modules/rating.service');
 const Rating = new RatingService();
@@ -41,4 +42,4 @@ describe('Rating Service', function() {
         });
     });
 
-})
+});
