@@ -88,14 +88,14 @@ function extract(file) {
 }
 ```
 
-All external service methods are handle using `ES6 Promises` where you can pass a callback function on success or fail:
+All external service methods are handled using `ES6 Promises` where you can pass a callback function on success or fail:
 ```
 download().then(extract).then(success,error);
 ```
 
 ### FirebaseDb
 
-A defined list of methods have been written as a wrapper around the `Firebase API`, this enable a clean and readable set of functions to be called.
+A defined list of methods have been written as a wrapper around the `Firebase API`, this enables a clean and readable set of functions to be called.
 Examples:
 ```
 const FirebaseDb = new FirebaseService(config);
