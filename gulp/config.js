@@ -40,10 +40,12 @@ module.exports = ( function() {
                 ], callback );
             },
             'start': function runCommand( callback ) {
-                runSequence([
-                    'lint-scripts',
-                    'lint-code-standards'
-                ], [
+                runSequence(
+                // [
+                //     // 'lint-scripts',
+                //     // 'lint-code-standards'
+                // ],
+                [
                     'run-code'
                 ], callback );
             }

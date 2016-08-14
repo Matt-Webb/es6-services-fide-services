@@ -31,9 +31,9 @@ class FirebasePlayerService {
         const currentProcess = Date.now();
         const ref = that.db.ref( 'players/' );
 
-        return new Promise( function( fulfill, reject ) {
+        return new Promise( ( fulfill, reject ) => {
 
-            reader.on( 'record', function( record ) {
+            reader.on( 'record', record => {
 
                 let p = record.children;
                 let player = {};
@@ -57,7 +57,7 @@ class FirebasePlayerService {
 
                 try {
                     if ( player[p[0].text].rating !== null && player[p[0].text].name !== null && player[p[0].text].country === 'ENG') {
-                        ref.update( player, function( error ) {
+                        ref.update( player,  error => {
                             if ( error ) {
                                 reject( new Error( error ) );
                             }
@@ -66,7 +66,7 @@ class FirebasePlayerService {
                 } catch ( error ) {
                     reject( new Error( error ) );
                 }
-            } ).on( 'end', function() {
+            } ).on( 'end', () => {
                 fulfill( fileName );
             } );
         } );
@@ -86,9 +86,9 @@ class FirebasePlayerService {
             gzip: false
         } );
 
-        return new Promise( function( fulfill, reject ) {
+        return new Promise( ( fulfill, reject ) => {
 
-            reader.on( 'record', function( record ) {
+            reader.on( 'record', record => {
 
                 let refRating;
                 let player = record.children;
@@ -107,12 +107,12 @@ class FirebasePlayerService {
 
                     try {
 
-                        if(!refRating) {
+                        if( !refRating ) {
                             reject( new Error( 'Ref Rating is undefined!' ));
                         }
 
                         log.trace( 'Player Updated', player[1].text, player[8].text, player[2].text, refRating );
-                        refRating.push( rating, function( error ) {
+                        refRating.push( rating, error => {
                             if ( error ) {
                                 log.trace( 'Error', error );
                                 reject( new Error( error ) );
@@ -124,7 +124,7 @@ class FirebasePlayerService {
                         reject( new Error( error ) );
                     }
                 }
-            } ).on( 'end', function() {
+            } ).on( 'end', () => {
                 fulfill( fileName );
             } );
         } );
@@ -142,15 +142,17 @@ class FirebasePlayerService {
         const ref = that.db.ref( 'players' );
         let items = [];
 
-        return new Promise( function( fulfill, reject ) {
+        return new Promise( ( fulfill, reject ) => {
             if ( typeof child === 'string' && typeof limit === 'number' ) {
-                ref.orderByChild( child ).limitToLast( limit ).once( 'value', function( snapshot ) {
-                    snapshot.forEach(function( childSnapshot ) {
+                ref.orderByChild( child ).limitToLast( limit ).once( 'value', snapshot => {
+
+                    snapshot.forEach( childSnapshot => {
                         items.push( childSnapshot.val() );
                     } );
-                } ).then( function() {
+
+                } ).then( () => {
                     fulfill( items.reverse() );
-                }, function( error ) {
+                },  error => {
                     reject( new Error( error ) );
                 } );
 
@@ -171,14 +173,13 @@ class FirebasePlayerService {
         const ref = that.db.ref( 'players/' + id );
         let player;
 
-        return new Promise( function( fulfill, reject ) {
-            ref.once( 'value', function( snapshot ) {
+        return new Promise( ( fulfill, reject ) => {
+            ref.once( 'value', snapshot => {
                 player = snapshot.val();
-            }, function( error ) {
-                reject( new Error( error ) );
-            } ).then( function() {
-                fulfill( player );
-            });
+                return;
+            },
+            error => reject( new Error( error )))
+            .then( () => fulfill( player ));
         });
 
     }

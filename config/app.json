@@ -1,8 +1,8 @@
 {
     "db": {
         "firebase": {
-            "databaseURL": "https://mychessrating.firebaseio.com/",
-            "serviceAccount": "./secure/mychessrating-35b25418f350.json"
+            "databaseURL": "https://fide-players.firebaseio.com/",
+            "serviceAccount": "./secure/fide-players-81750dee7c1e.json"
         },
         "fide": {
             "url": "http://ratings.fide.com/download/players_list_xml.zip",

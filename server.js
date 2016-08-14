@@ -3,6 +3,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const firebase = require( 'firebase' );
 const port = process.env.PORT || 8080;
 const service = require('./main')();
 const log = require('./modules/logger.service');
@@ -42,9 +43,4 @@ app.get('/api/download/:file', function(req, res) {
 app.listen(port);
 log.info('Server started on port', port);
 
-service.updatePlayerRatings('test')
-    .then(function(data) {
-        log.info(data);
-    }, function(error) {
-        log.info(error);
-    });
+service.createPlayerJson( 'players_list_xml_foa.xml' );

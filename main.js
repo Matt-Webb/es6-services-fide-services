@@ -1,55 +1,45 @@
-'use strict';
+"use strict";
 
-const config = require('./config/app');
-const moment = require('moment');
+const config = require( './config/app' );
+const moment = require( 'moment' );
 const log = require( './modules/logger.service' );
-const FidePlayerService = require('./modules/player.service');
-const FirebaseService = require('./modules/firebase.service');
-const RatingService = require('./modules/rating.service');
-const Players = new FidePlayerService(config);
-const FirebaseDb = new FirebaseService(config);
+const FidePlayerService = require( './modules/player.service' );
+const FirebaseService = require( './modules/firebase.service' );
+const RatingService = require( './modules/rating.service' );
+const Players = new FidePlayerService( config );
+const FirebaseDb = new FirebaseService( config );
 const Rating = new RatingService();
 
 
 module.exports = function() {
 
-    function startProcess() {
-        return new Promise(function(fulfill, reject) {
-            const fileName = 'fide-players-' + moment().format('DD-MM-YY') + '.zip';
-            fulfill(fileName);
-        });
+    const startProcess = () => {
+        return new Promise( ( fulfill, reject ) => {
+            const fileName = 'fide-players-' + moment().format( 'DD-MM-YY' ) + '.zip';
+            fulfill( fileName );
+        } );
     }
 
-    function download( file ) {
-        return Players.download( file );
-    }
+    const download = ( file ) => Players.download( file );
 
-    function extract(file) {
-        return Players.extract( file );
-    }
+    const extract = ( file ) => Players.extract( file );
 
-    function addPlayers(fileName) {
-        return FirebaseDb.createAll( fileName );
-    }
+    const createPlayerJson = ( file ) => Players.createJson( file );
 
-    function updatePlayerRatings( fileName ) {
-        return FirebaseDb.updateRatings( fileName )
-    }
+    const addPlayers = ( fileName ) => FirebaseDb.createAll( fileName );
 
-    function queryPlayer( child, limit ) {
-        return FirebaseDb.query( child, limit );
-    }
+    const updatePlayerRatings = ( fileName ) => FirebaseDb.updateRatings( fileName )
 
-    function playerById( id ) {
-        return FirebaseDb.playerById( id );
-    }
+    const queryPlayer = ( child, limit ) => FirebaseDb.query( child, limit );
 
-    function finish(data) {
+    const playerById = id => FirebaseDb.playerById( id );
+
+    const finish = data => {
         log.trace( 'Process Finished', data );
         process.exit();
     }
 
-    function error(data) {
+    const error = data => {
         log.error( 'Process Error', data.Error );
         process.exit();
     }
@@ -58,6 +48,7 @@ module.exports = function() {
         startProcess        : startProcess,
         download            : download,
         extract             : extract,
+        createPlayerJson    : createPlayerJson,
         addPlayers          : addPlayers,
         updatePlayerRatings : updatePlayerRatings,
         queryPlayer         : queryPlayer,
