@@ -1,5 +1,4 @@
 {
-    "validateLineBreaks": "CRLF",
     "validateIndentation": 4,
     "validateQuoteMarks": { "mark": "'", "escape": true },
     "maximumLineLength": 200

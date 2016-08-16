@@ -59,6 +59,8 @@ class FidePlayerService {
     **/
     createJson( file ) {
 
+      console.log( 'Create Json method started...', file );
+
       const reader = bigXml.createReader( this.properties.db.fide.folder + this.properties.db.fide.xmlFile, /^(player)$/, {
           gzip: false
       }) ;
@@ -75,7 +77,7 @@ class FidePlayerService {
               // below we create a dynamic key using an object literal obj['name'], this allows use to use
               // the fide id as the firebase reference id.
               player[p[0].text] = {
-                  id: parseInt(p[0].text, 10) || null,
+                  id: parseInt( p[0].text, 10 ) || null,
                   name: p[1].text || null,
                   country: p[2].text || null,
                   sex: p[3].text || null,
@@ -83,9 +85,9 @@ class FidePlayerService {
                   womens_title: p[5].text || null,
                   online_title: p[6].text || null,
                   foa_title: p[7].text || null,
-                  games: parseInt(p[9].text) || null,
-                  k_factor: parseInt(p[10].text, 10) || null,
-                  birth_year: parseInt(p[17].text, 10) || null,
+                  games: parseInt( p[9].text ) || null,
+                  k_factor: parseInt( p[10].text, 10 ) || null,
+                  birth_year: parseInt( p[17].text, 10 ) || null,
                   flag: p[18].text || null
               };
 
@@ -100,12 +102,12 @@ class FidePlayerService {
               }
           } ).on( 'end', () => {
 
-              console.log( ' about to write data to file... ');
-              fs.writeFile( '.data/players.json' , JSON.stringify( players ), 'UTF8', (err) => {
+              console.log( 'About to write data to file...');
+
+              fs.writeFile( 'data/players.json' , JSON.stringify( players ), 'UTF8', (err) => {
                 if( err ) console.log( err );
 
-                console.log('Success');
-
+                console.log( 'Success' );
               });
 
               fulfill( file );

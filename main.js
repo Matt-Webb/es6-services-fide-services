@@ -20,15 +20,18 @@ module.exports = function() {
         } );
     }
 
-    const download = ( file ) => Players.download( file );
+    const download = file => Players.download( file );
 
-    const extract = ( file ) => Players.extract( file );
+    const extract = file => Players.extract( file );
 
-    const createPlayerJson = ( file ) => Players.createJson( file );
+    const createPlayerJson = file => {
+        console.log( file );
+        Players.createJson( file );
+    };
 
-    const addPlayers = ( fileName ) => FirebaseDb.createAll( fileName );
+    const addPlayers = fileName => FirebaseDb.createAll( fileName );
 
-    const updatePlayerRatings = ( fileName ) => FirebaseDb.updateRatings( fileName )
+    const updatePlayerRatings = fileName => FirebaseDb.updateRatings( fileName )
 
     const queryPlayer = ( child, limit ) => FirebaseDb.query( child, limit );
 

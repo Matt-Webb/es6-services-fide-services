@@ -3,14 +3,6 @@
 var runSequence = require( 'run-sequence' );
 
 module.exports = ( function() {
-    var url = require( 'url' );
-    var fs = require( 'fs' );
-
-    var base = {
-        src: './src',
-        build: './tmp',
-        dist: './dist',
-    };
 
     return {
         tasks: {
