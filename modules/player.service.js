@@ -83,6 +83,7 @@ class FidePlayerService {
                   womens_title: p[5].text || null,
                   online_title: p[6].text || null,
                   foa_title: p[7].text || null,
+                  rating: parseInt( player[8].text, 10 ) || null,
                   games: parseInt( p[9].text ) || null,
                   k_factor: parseInt( p[10].text, 10 ) || null,
                   birth_year: parseInt( p[17].text, 10 ) || null,
@@ -92,7 +93,7 @@ class FidePlayerService {
               try {
                   if ( player.country === 'ENG' ) {
 
-                    console.log( 'Player added! ', counter )
+                    log.trace( 'Player added! ', counter )
                     players.push( player );
                     counter++;
                   }
@@ -102,7 +103,7 @@ class FidePlayerService {
               }
           } ).on( 'end', () => {
 
-              console.log( 'About to write data to file...');
+              log.trace( 'About to write data to file...');
 
               fs.writeFile( 'data/players.json' , JSON.stringify( players ), 'UTF8', (err) => {
                 if( err ) console.log( err );
