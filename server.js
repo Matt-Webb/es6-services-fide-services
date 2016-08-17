@@ -37,8 +37,8 @@ app.get( '/api/download/:file', ( req, res ) => {
         error => res.status( 404 ).send( error ) );
 });
 
-app.get( 'api/create/', ( req, res ) => {
-    log.trace( 'Reuqest for created json feed' );
+app.get( '/api/create', ( req, res ) => {
+    log.trace( 'Request for created json feed' );
     service.startProcess()
         .then( service.createPlayerJson( config.db.fide.xmlFile ) )
         .then( data => res.send( data ),
@@ -47,3 +47,5 @@ app.get( 'api/create/', ( req, res ) => {
 
 app.listen( port );
 log.info( 'Server started on port', port );
+
+service.createPlayerJson( config.db.fide.xmlFile );

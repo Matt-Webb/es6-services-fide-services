@@ -32,12 +32,7 @@ module.exports = ( function() {
                 ], callback );
             },
             'start': function runCommand( callback ) {
-                runSequence(
-                // [
-                //     // 'lint-scripts',
-                //     // 'lint-code-standards'
-                // ],
-                [
+                runSequence([
                     'run-code'
                 ], callback );
             }

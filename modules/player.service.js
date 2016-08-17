@@ -59,12 +59,13 @@ class FidePlayerService {
     **/
     createJson( file ) {
 
-      console.log( 'Create Json method started...', file );
+      log.trace( 'Create Json method started...', file );
 
       const reader = bigXml.createReader( this.properties.db.fide.folder + this.properties.db.fide.xmlFile, /^(player)$/, {
           gzip: false
       }) ;
 
+      let counter = 0;
       let players = [];
 
       return new Promise( ( fulfill, reject ) => {
@@ -72,11 +73,8 @@ class FidePlayerService {
           reader.on( 'record', record => {
 
               let p = record.children;
-              let player = {};
 
-              // below we create a dynamic key using an object literal obj['name'], this allows use to use
-              // the fide id as the firebase reference id.
-              player[p[0].text] = {
+              let player = {
                   id: parseInt( p[0].text, 10 ) || null,
                   name: p[1].text || null,
                   country: p[2].text || null,
@@ -92,11 +90,13 @@ class FidePlayerService {
               };
 
               try {
-                  if ( player[p[0].text].rating !== null && player[p[0].text].name !== null && player[p[0].text].country === 'ENG') {
+                  if ( player.country === 'ENG' ) {
 
+                    console.log( 'Player added! ', counter )
                     players.push( player );
-
+                    counter++;
                   }
+
               } catch ( error ) {
                   reject( new Error( error ) );
               }
@@ -107,7 +107,7 @@ class FidePlayerService {
               fs.writeFile( 'data/players.json' , JSON.stringify( players ), 'UTF8', (err) => {
                 if( err ) console.log( err );
 
-                console.log( 'Success' );
+                log.trace( 'Success' );
               });
 
               fulfill( file );
