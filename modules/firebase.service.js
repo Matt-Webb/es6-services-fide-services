@@ -26,7 +26,7 @@ class FirebasePlayerService {
         const that = this;
         const reader = bigXml.createReader( this.properties.db.fide.folder + this.properties.db.fide.xmlFile, /^(player)$/, {
             gzip: false
-        }) ;
+        } );
 
         const currentProcess = Date.now();
         const ref = that.db.ref( 'players/' );
@@ -40,28 +40,28 @@ class FirebasePlayerService {
 
                 // below we create a dynamic key using an object literal obj['name'], this allows use to use
                 // the fide id as the firebase reference id.
-                player[p[0].text] = {
-                    id: parseInt(p[0].text, 10) || null,
-                    name: p[1].text || null,
-                    country: p[2].text || null,
-                    sex: p[3].text || null,
-                    title: p[4].text || null,
-                    womens_title: p[5].text || null,
-                    online_title: p[6].text || null,
-                    foa_title: p[7].text || null,
-                    games: parseInt(p[9].text) || null,
-                    k_factor: parseInt(p[10].text, 10) || null,
-                    birth_year: parseInt(p[17].text, 10) || null,
-                    flag: p[18].text || null
+                player[ p[ 0 ].text ] = {
+                    id: parseInt( p[ 0 ].text, 10 ) || null,
+                    name: p[ 1 ].text || null,
+                    country: p[ 2 ].text || null,
+                    sex: p[ 3 ].text || null,
+                    title: p[ 4 ].text || null,
+                    womens_title: p[ 5 ].text || null,
+                    online_title: p[ 6 ].text || null,
+                    foa_title: p[ 7 ].text || null,
+                    games: parseInt( p[ 9 ].text ) || null,
+                    k_factor: parseInt( p[ 10 ].text, 10 ) || null,
+                    birth_year: parseInt( p[ 17 ].text, 10 ) || null,
+                    flag: p[ 18 ].text || null
                 };
 
                 try {
-                    if ( player[p[0].text].rating !== null && player[p[0].text].name !== null && player[p[0].text].country === 'ENG') {
-                        ref.update( player,  error => {
+                    if ( player[ p[ 0 ].text ].rating !== null && player[ p[ 0 ].text ].name !== null && player[ p[ 0 ].text ].country === 'ENG' ) {
+                        ref.update( player, error => {
                             if ( error ) {
                                 reject( new Error( error ) );
                             }
-                        });
+                        } );
                     }
                 } catch ( error ) {
                     reject( new Error( error ) );
@@ -79,7 +79,7 @@ class FirebasePlayerService {
      */
     updateRatings( fileName ) {
 
-        log.info('Updating ratings.');
+        log.info( 'Updating ratings.' );
         const that = this;
         const currentProcess = Date.now();
         const reader = bigXml.createReader( that.properties.db.fide.folder + that.properties.db.fide.xmlFile, /^(player)$/, {
@@ -92,34 +92,34 @@ class FirebasePlayerService {
 
                 let refRating;
                 let player = record.children;
-                let id = parseInt(player[0].text,10);
+                let id = parseInt( player[ 0 ].text, 10 );
 
                 if ( id === 418250 ) {
 
                     refRating = that.db.ref( 'players/' + id + '/rating' );
 
                     let rating = {
-                        rating: parseInt( player[8].text, 10 ) || null,
+                        rating: parseInt( player[ 8 ].text, 10 ) || null,
                         fromFile: fileName,
                         uploaded: currentProcess,
-                        date: moment().format('Do MMM YY')
+                        date: moment().format( 'Do MMM YY' )
                     };
 
                     try {
 
-                        if( !refRating ) {
-                            reject( new Error( 'Ref Rating is undefined!' ));
+                        if ( !refRating ) {
+                            reject( new Error( 'Ref Rating is undefined!' ) );
                         }
 
-                        log.trace( 'Player Updated', player[1].text, player[8].text, player[2].text, refRating );
+                        log.trace( 'Player Updated', player[ 1 ].text, player[ 8 ].text, player[ 2 ].text, refRating );
                         refRating.push( rating, error => {
                             if ( error ) {
                                 log.trace( 'Error', error );
                                 reject( new Error( error ) );
                             } else {
-                                log.trace( 'Success', player[1].text, player[8].text, player[2].text );
+                                log.trace( 'Success', player[ 1 ].text, player[ 8 ].text, player[ 2 ].text );
                             }
-                        });
+                        } );
                     } catch ( error ) {
                         reject( new Error( error ) );
                     }
@@ -152,14 +152,14 @@ class FirebasePlayerService {
 
                 } ).then( () => {
                     fulfill( items.reverse() );
-                },  error => {
+                }, error => {
                     reject( new Error( error ) );
                 } );
 
             } else {
-                reject( new Error('Parameters passed are not of valid types') );
+                reject( new Error( 'Parameters passed are not of valid types' ) );
             }
-        });
+        } );
     }
 
     /**
@@ -175,12 +175,12 @@ class FirebasePlayerService {
 
         return new Promise( ( fulfill, reject ) => {
             ref.once( 'value', snapshot => {
-                player = snapshot.val();
-                return;
-            },
-            error => reject( new Error( error )))
-            .then( () => fulfill( player ));
-        });
+                        player = snapshot.val();
+                        return;
+                    },
+                    error => reject( new Error( error ) ) )
+                .then( () => fulfill( player ) );
+        } );
 
     }
 }

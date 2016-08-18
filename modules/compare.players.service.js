@@ -1,36 +1,59 @@
 "use strict";
 
-const fidePlayers = require( '../data/players' );
-const bakuPlayers = require( '../data/open_players' );
 const log = require( './logger.service' );
+const fs = require( 'fs' );
+const JSONStream = require( 'JSONStream' );
+const es = require( 'event-stream' );
+const readStream = fs.createReadStream( '../data/players.json', {
+    encoding: 'utf8'
+} );
+const parser = JSONStream.parse( '*' );
 
-let comparePlayer = ( main , subset ) => {
+let matches = [];
+console.time( "generate-list" );
 
-    console.log( 'Comparing players, this could take a while' );
-    let counter = 0;
+fs.readFile( '../data/open_players.json', 'utf8', ( err, smallListData ) => {
 
-    for( let player of main ) {
+    let smallListPlayers = [];
 
-        let officialName = player.name;
+    JSON.parse( smallListData ).forEach( team => {
+        team.players.forEach( player => smallListPlayers.push( player ) );
+    } )
 
-        for( let team of subset ) {
-
-            for( let p of team.players ) {
-
-                let bakuName = p.name;
-
-                if( bakuName.toString().toLowerCase() === officialName.toString().replace(",","").toLowerCase() ) {
-                    log.trace( `Match found! Baku List: ${bakuName} (${p.rating}) | Official List: ${officialName} (${player.rating})` );
-                    console.log( player );
+    readStream.pipe( parser )
+        .pipe( es.mapSync( bigListPlayer => {
+            smallListPlayers.filter( smallListPlayer => {
+                if ( bigListPlayer.name === null ) {
+                    return;
                 }
-            }
 
-            counter++;
-        }
-        counter++;
-    }
+                if ( smallListPlayer.name.toString().toLowerCase() === bigListPlayer.name.toString().replace( ",", "" ).toLowerCase() ) {
 
-    console.log('Complete', counter );
-}
+                    let verifiedPlayer = {
+                        id: bigListPlayer.id,
+                        name: smallListPlayer.name,
+                        name_offical: bigListPlayer.name,
+                        rating: parseInt( bigListPlayer.rating, 10 ) || null,
+                        rating_unofficial: parseInt( smallListPlayer.rating, 10 ) || null,
+                        title: bigListPlayer.title,
+                        country: smallListPlayer.country
+                    };
 
-comparePlayer( fidePlayers, bakuPlayers );
+                    matches.push( verifiedPlayer );
+                }
+            } );
+        } ) );
+
+    readStream.on( 'end', function () {
+
+        fs.writeFile( '../data/final_baku_open_players.json', JSON.stringify( matches ), 'UTF8', err => {
+
+            if ( err ) log.trace( err );
+
+            log.trace( 'finished', matches.length );
+            console.timeEnd( "generate-list" )
+        } );
+
+    } );
+
+} );
