@@ -24,10 +24,7 @@ module.exports = function() {
 
     const extract = file => Players.extract( file );
 
-    const createPlayerJson = file => {
-        console.log( file );
-        Players.createJson( file );
-    };
+    const createPlayerJson = file => Players.createJson( file );
 
     const addPlayers = fileName => FirebaseDb.createAll( fileName );
 

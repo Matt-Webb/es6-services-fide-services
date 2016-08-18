@@ -24,31 +24,31 @@ class FidePlayerService {
         const that = this;
         return new Promise( ( fulfill, reject ) => {
             try {
-                let file = fs.createWriteStream( that.fide.folder + '/' + fileName );
+                let file = fs.createWriteStream( `${that.fide.folder}/${fileName}` );
 
-                log.trace('Executing HTTP GET', that.fide.url);
+                log.trace( 'Executing HTTP GET', that.fide.url );
 
                 http.get( that.fide.url, response => {
-                    response.pipe(file);
+                    response.pipe( file );
 
-                    log.trace('Successful response.');
+                    log.trace( 'Successful response.' );
 
-                    file.on('finish', () => {
+                    file.on( 'finish', () => {
                         file.close();
                         fulfill( fileName );
-                    });
-                }).on( 'error', error => {
+                    } );
+                } ).on( 'error', error => {
                     fs.unlink( that.fide.folder );
 
                     log.error( 'Error on HTTP GET', error );
 
                     reject( new Error( error ) );
-                });
+                } );
             } catch ( error ) {
                 log.error( 'Unexpected Error', error );
                 reject( new Error( error ) );
             }
-        });
+        } );
     }
 
     /**
@@ -56,64 +56,74 @@ class FidePlayerService {
      * outside of this service can just that data source.
      * @return { promise }
      * @param { string } file
-    **/
+     **/
     createJson( file ) {
 
-      log.trace( 'Create Json method started...', file );
+        log.trace( 'Create Json method started...', file );
 
-      const reader = bigXml.createReader( this.properties.db.fide.folder + this.properties.db.fide.xmlFile, /^(player)$/, {
-          gzip: false
-      }) ;
+        const reader = bigXml.createReader( this.properties.db.fide.folder + this.properties.db.fide.xmlFile, /^(player)$/, {
+            gzip: false
+        } );
 
-      let counter = 0;
-      let players = [];
+        let counter = 0;
+        let players = [];
 
-      return new Promise( ( fulfill, reject ) => {
+        return new Promise( ( fulfill, reject ) => {
 
-          reader.on( 'record', record => {
+            try {
 
-              let p = record.children;
+                reader.on( 'record', record => {
 
-              let player = {
-                  id: parseInt( p[0].text, 10 ) || null,
-                  name: p[1].text || null,
-                  country: p[2].text || null,
-                  sex: p[3].text || null,
-                  title: p[4].text || null,
-                  womens_title: p[5].text || null,
-                  online_title: p[6].text || null,
-                  foa_title: p[7].text || null,
-                  rating: parseInt( player[8].text, 10 ) || null,
-                  games: parseInt( p[9].text ) || null,
-                  k_factor: parseInt( p[10].text, 10 ) || null,
-                  birth_year: parseInt( p[17].text, 10 ) || null,
-                  flag: p[18].text || null
-              };
+                    let p = record.children;
 
-              try {
-                  if ( player.country === 'ENG' ) {
+                    let player = {}
 
-                    log.trace( 'Player added! ', counter )
-                    players.push( player );
-                    counter++;
-                  }
+                    try {
 
-              } catch ( error ) {
-                  reject( new Error( error ) );
-              }
-          } ).on( 'end', () => {
+                        let rating = p[ 8 ];
 
-              log.trace( 'About to write data to file...');
+                        player = {
+                            id: parseInt( p[ 0 ].text, 10 ) || null,
+                            name: p[ 1 ].text || null
+                        };
 
-              fs.writeFile( 'data/players.json' , JSON.stringify( players ), 'UTF8', (err) => {
-                if( err ) console.log( err );
+                        if ( typeof rating !== 'undefined' || typeof rating.text !== 'undefined' ) {
+                            player.rating = parseInt( p[ 8 ].text, 10 ) || null;
+                        }
 
-                log.trace( 'Success' );
-              });
+                    } catch ( e ) {
+                        console.log( e );
+                    }
 
-              fulfill( file );
-          } );
-      } );
+                    try {
+
+                        //log.trace( 'Player added! ', counter )
+                        players.push( player );
+                        counter++;
+
+                    } catch ( error ) {
+                        reject( new Error( error ) );
+                        log.trace( new Error( error ) );
+                    }
+
+                } ).on( 'end', () => {
+
+                    log.trace( 'About to write data to file...' );
+
+                    fs.writeFile( 'data/players.json', JSON.stringify( players ), 'UTF8', err => {
+
+                        if ( err ) log.trace( err );
+
+                        log.trace( "Success", `Number of records processed ${counter}` );
+                    } );
+
+                    fulfill( file );
+                } );
+
+            } catch ( e ) {
+                log.trace( 'Error', e );
+            }
+        } );
 
     }
 
@@ -129,11 +139,11 @@ class FidePlayerService {
 
         return new Promise( ( fulfill, reject ) => {
 
-            if ( file.indexOf('.zip') === -1 ) {
-                reject( new Error( 'File must be stored as a .zip') );
+            if ( file.indexOf( '.zip' ) === -1 ) {
+                reject( new Error( 'File must be stored as a .zip' ) );
             }
 
-            let zip = new AdmZip( that.fide.folder + '/' + file  );
+            let zip = new AdmZip( `${that.fide.folder}/${file}` );
             let zipEntries = zip.getEntries();
 
             zipEntries.forEach( zipEntry => {
@@ -155,8 +165,8 @@ class FidePlayerService {
 
                     reject( new Error( 'Unable to match file' ) );
                 }
-            });
-        });
+            } );
+        } );
     }
 }
 

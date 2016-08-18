@@ -1,36 +1,38 @@
 "use strict";
 
-const fidePlayers = require( '../data/players' );
-const bakuPlayers = require( '../data/open_players' );
 const log = require( './logger.service' );
+const fs = require( 'fs' );
+const JSONStream = require( 'JSONStream' );
+const es = require( 'event-stream' );
+const readStream = fs.createReadStream( '../data/players.json', {
+    encoding: 'utf8'
+} );
+const parser = JSONStream.parse( '*' );
 
-let comparePlayer = ( main , subset ) => {
+let matches = [];
+let counter = 0;
 
-    console.log( 'Comparing players, this could take a while' );
-    let counter = 0;
+fs.readFile( '../data/open_players.json', 'utf8', ( err, smallListData ) => {
 
-    for( let player of main ) {
+    let smallListPlayers = JSON.parse( smallListData )[ 0 ].players;
 
-        let officialName = player.name;
-
-        for( let team of subset ) {
-
-            for( let p of team.players ) {
-
-                let bakuName = p.name;
-
-                if( bakuName.toString().toLowerCase() === officialName.toString().replace(",","").toLowerCase() ) {
-                    log.trace( `Match found! Baku List: ${bakuName} (${p.rating}) | Official List: ${officialName} (${player.rating})` );
-                    console.log( player );
+    readStream.pipe( parser )
+        .pipe( es.mapSync( bigListPlayer => {
+            smallListPlayers.filter( smallListPlayer => {
+                if ( bigListPlayer.name === null ) {
+                    counter++;
+                    return;
                 }
-            }
 
-            counter++;
-        }
-        counter++;
-    }
+                if ( smallListPlayer.name.toString().toLowerCase() === bigListPlayer.name.toString().replace( ",", "" ).toLowerCase() ) {
+                    matches.push( bigListPlayer );
+                    console.log( `Match found ${smallListPlayer.name} | ${bigListPlayer.name}` );
+                }
+            } );
+        } ) );
 
-    console.log('Complete', counter );
-}
+    readStream.on( 'end', function () {
+        console.log( 'finished', matches, `Players with no name: ${counter}` );
+    } );
 
-comparePlayer( fidePlayers, bakuPlayers );
+} );

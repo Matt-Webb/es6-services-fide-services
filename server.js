@@ -17,16 +17,16 @@ app.use( bodyParser.json() );
 app.get( '/api/player/:id', ( req, res ) => {
     log.trace( 'Request for player', req.params.id );
     service.playerById( req.params.id )
-    .then( data => res.send( data ),
-    error => res.status( 404 ).send( error ) )
-});
+        .then( data => res.send( data ),
+            error => res.status( 404 ).send( error ) )
+} );
 
 app.get( '/api/upload/:fileName', ( req, res ) => {
     log.trace( 'Upload send', req.params.fileName );
     service.updatePlayerRatings( req.params.fileName )
-    .then( data => res.send( data ),
-    error => res.status( 500 ).send( error ))
-});
+        .then( data => res.send( data ),
+            error => res.status( 500 ).send( error ) )
+} );
 
 app.get( '/api/download/:file', ( req, res ) => {
     log.trace( 'Download requested', req.params.file );
@@ -34,18 +34,28 @@ app.get( '/api/download/:file', ( req, res ) => {
         .then( service.download )
         .then( service.extract )
         .then( data => res.send( data ),
-        error => res.status( 404 ).send( error ) );
-});
+            error => res.status( 404 ).send( error ) );
+} );
 
 app.get( '/api/create', ( req, res ) => {
     log.trace( 'Request for created json feed' );
-    service.startProcess()
-        .then( service.createPlayerJson( config.db.fide.xmlFile ) )
+    service.createPlayerJson( config.db.fide.xmlFile )
         .then( data => res.send( data ),
-        error => res.status( 404 ).send( error ) );
-})
+            error => res.status( 404 ).send( error ) );
+} )
 
 app.listen( port );
 log.info( 'Server started on port', port );
 
-service.createPlayerJson( config.db.fide.xmlFile );
+// service.startProcess()
+//     .then( service.download )
+//     .then( service.extract );
+// // .then( service.createPlayerJson( config.db.fide.xmlFile ) )
+// // .then( data => console.log( data ), error => console.log( error ) );
+
+// service.extract( 'fide-players-16-08-16.zip' ).then( data => console.log( data ),
+//     error => console.log( error ) );
+
+service.createPlayerJson( config.db.fide.xmlFile )
+    .then( data => res.send( data ),
+        error => res.status( 404 ).send( error ) );
