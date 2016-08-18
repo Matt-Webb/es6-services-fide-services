@@ -152,5 +152,4 @@ getPlayers( config.open.url, config.open.output );
 
 // Get the WOMENS players:
 getPlayers( config.womens.url, config.womens.output );
-
 // module.exports = getPlayers;
