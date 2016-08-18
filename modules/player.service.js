@@ -106,7 +106,9 @@ class FidePlayerService {
                         log.trace( new Error( error ) );
                     }
 
-                } ).on( 'end', () => {
+                } );
+
+                reader.on( 'end', () => {
 
                     log.trace( 'About to write data to file...' );
 

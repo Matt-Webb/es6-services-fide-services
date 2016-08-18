@@ -10,29 +10,50 @@ const readStream = fs.createReadStream( '../data/players.json', {
 const parser = JSONStream.parse( '*' );
 
 let matches = [];
-let counter = 0;
+console.time( "generate-list" );
 
 fs.readFile( '../data/open_players.json', 'utf8', ( err, smallListData ) => {
 
-    let smallListPlayers = JSON.parse( smallListData )[ 0 ].players;
+    let smallListPlayers = [];
+
+    JSON.parse( smallListData ).forEach( team => {
+        team.players.forEach( player => smallListPlayers.push( player ) );
+    } )
 
     readStream.pipe( parser )
         .pipe( es.mapSync( bigListPlayer => {
             smallListPlayers.filter( smallListPlayer => {
                 if ( bigListPlayer.name === null ) {
-                    counter++;
                     return;
                 }
 
                 if ( smallListPlayer.name.toString().toLowerCase() === bigListPlayer.name.toString().replace( ",", "" ).toLowerCase() ) {
-                    matches.push( bigListPlayer );
-                    console.log( `Match found ${smallListPlayer.name} | ${bigListPlayer.name}` );
+
+                    let verifiedPlayer = {
+                        id: bigListPlayer.id,
+                        name: smallListPlayer.name,
+                        name_offical: bigListPlayer.name,
+                        rating: parseInt( bigListPlayer.rating, 10 ) || null,
+                        rating_unofficial: parseInt( smallListPlayer.rating, 10 ) || null,
+                        title: bigListPlayer.title,
+                        country: smallListPlayer.country
+                    };
+
+                    matches.push( verifiedPlayer );
                 }
             } );
         } ) );
 
     readStream.on( 'end', function () {
-        console.log( 'finished', matches, `Players with no name: ${counter}` );
+
+        fs.writeFile( '../data/final_baku_open_players.json', JSON.stringify( matches ), 'UTF8', err => {
+
+            if ( err ) log.trace( err );
+
+            log.trace( 'finished', matches.length );
+            console.timeEnd( "generate-list" )
+        } );
+
     } );
 
 } );
