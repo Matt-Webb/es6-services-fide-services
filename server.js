@@ -50,8 +50,8 @@ log.info( 'Server started on port', port );
 // service.startProcess()
 //     .then( service.download )
 //     .then( service.extract );
-// // .then( service.createPlayerJson( config.db.fide.xmlFile ) )
-// // .then( data => console.log( data ), error => console.log( error ) );
+// .then( service.createPlayerJson( config.db.fide.xmlFile ) )
+// .then( data => console.log( data ), error => console.log( error ) );
 
 // service.extract( 'fide-players-16-08-16.zip' ).then( data => console.log( data ),
 //     error => console.log( error ) );

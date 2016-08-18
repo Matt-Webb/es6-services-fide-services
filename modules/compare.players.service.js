@@ -9,7 +9,7 @@ const readStream = fs.createReadStream( '../data/players.json', {
 } );
 const parser = JSONStream.parse( '*' );
 
-let matches = [];
+let matches = new Set();
 console.time( "generate-list" );
 
 fs.readFile( '../data/open_players.json', 'utf8', ( err, smallListData ) => {
@@ -39,7 +39,7 @@ fs.readFile( '../data/open_players.json', 'utf8', ( err, smallListData ) => {
                         country: smallListPlayer.country
                     };
 
-                    matches.push( verifiedPlayer );
+                    matches.add( verifiedPlayer );
                 }
             } );
         } ) );
