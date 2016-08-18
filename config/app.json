@@ -10,27 +10,31 @@
             "xmlFile": "players_list_xml_foa.xml"
         }
     },
+    "open": {
+        "url": "http://www1.bakuchessolympiad.com/content/53",
+        "output": "./data/open_players.json"
+    },
+    "womens": {
+        "url": "http://www1.bakuchessolympiad.com/content/54",
+        "output": "./data/women_players.json"
+    },
     "cron ": "/1 * * * * *",
     "logger ": {
-      "appenders": [
-        {
-          "type": "console"
-        },
-        {
-          "type": "file",
-          "filename": "./log/app.log",
-          "maxLogSize": 20480,
-          "backups": 3,
-          "category ": "app"
-        },
-        {
-          "type": "logLevelFilter",
-          "level": "ERROR",
-          "appender": {
+        "appenders": [{
+            "type": "console"
+        }, {
             "type": "file",
-            "filename": "./log/errors.log"
-          }
-        }
-      ]
+            "filename": "./log/app.log",
+            "maxLogSize": 20480,
+            "backups": 3,
+            "category ": "app"
+        }, {
+            "type": "logLevelFilter",
+            "level": "ERROR",
+            "appender": {
+                "type": "file",
+                "filename": "./log/errors.log"
+            }
+        }]
     }
 }
