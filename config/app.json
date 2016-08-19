@@ -1,8 +1,14 @@
 {
     "db": {
         "firebase": {
-            "databaseURL": "https://mychessrating.firebaseio.com",
-            "serviceAccount": "./secure/mychessrating-35b25418f350.json"
+            "fideOnly": {
+                "databaseURL": "https://mychessrating.firebaseio.com",
+                "serviceAccount": "./secure/mychessrating-35b25418f350.json"
+            },
+            "bakuOlympiad": {
+                "databaseURL": "https://baku-olympiad.firebaseio.com/",
+                "serviceAccount": "./secure/baku-olympiad-f989ef3d1ba3.json"
+            }
         },
         "fide": {
             "url": "http://ratings.fide.com/download/players_list_xml.zip",
