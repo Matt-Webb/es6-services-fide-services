@@ -10,8 +10,8 @@ class FirebasePlayerService {
     constructor( properties ) {
         this.properties = properties;
         this.firebase = firebase.initializeApp( {
-            databaseURL: properties.db.firebase.databaseURL,
-            serviceAccount: properties.db.firebase.serviceAccount
+            databaseURL: properties.db.firebase.fideOnly.databaseURL,
+            serviceAccount: properties.db.firebase.fideOnly.serviceAccount
         } );
         this.db = this.firebase.database();
     }

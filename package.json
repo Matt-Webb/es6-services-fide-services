@@ -19,6 +19,7 @@
     "big-xml": "^0.7.0",
     "body-parser": "^1.15.2",
     "chai": "^3.5.0",
+    "cheerio": "^0.20.0",
     "event-stream": "^3.3.4",
     "express": "^4.14.0",
     "firebase": "^3.2.1",
