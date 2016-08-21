@@ -10,6 +10,9 @@
                 "serviceAccount": "./secure/baku-olympiad-f989ef3d1ba3.json"
             }
         },
+        "mongo" : {
+                "api" : "http//:localhost:3000/api"
+        },
         "fide": {
             "url": "http://ratings.fide.com/download/players_list_xml.zip",
             "folder": "./data/",
