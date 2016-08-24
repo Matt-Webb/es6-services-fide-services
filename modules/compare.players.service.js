@@ -1,6 +1,6 @@
 "use strict";
 
-const log = require( './logger.service' );
+const log = require( './general/logger.service' );
 const fs = require( 'fs' );
 const JSONStream = require( 'JSONStream' );
 const es = require( 'event-stream' );
@@ -9,10 +9,18 @@ const readStream = fs.createReadStream( '../data/players.json', {
 } );
 const parser = JSONStream.parse( '*' );
 
+let type = process.argv[ 2 ];
+
+if ( !type ) {
+    console.log( 'Please provide a type "open" or "women" as a parameter!' );
+    return;
+}
+
 let matches = new Set();
+
 console.time( "generate-list" );
 
-fs.readFile( '../data/women_players.json', 'utf8', ( err, smallListData ) => {
+fs.readFile( '../data/baku_' + type + '_players.json', 'utf8', ( err, smallListData ) => {
 
     let smallListPlayers = [];
 
@@ -35,19 +43,27 @@ fs.readFile( '../data/women_players.json', 'utf8', ( err, smallListData ) => {
                     // as duplicated names can appear we compare the rating to what we expect it to be:
                     let checkRating = parseInt( smallListPlayer.rating, 10 ) === parseInt( bigListPlayer.rating, 10 );
 
+                    let verifiedPlayer = {
+                        id: bigListPlayer.id,
+                        name: smallListPlayer.name,
+                        nameOfficial: bigListPlayer.name,
+                        rating: parseInt( smallListPlayer.rating, 10 ) || null,
+                        ratingOfficial: parseInt( bigListPlayer.rating, 10 ) || null,
+                        title: bigListPlayer.title,
+                        country: smallListPlayer.country,
+                        isoCountry: bigListPlayer.country,
+                        eventType: smallListPlayer.event
+                    };
+
                     if ( checkRating ) {
-                        let verifiedPlayer = {
-                            id: bigListPlayer.id,
-                            name: smallListPlayer.name,
-                            name_offical: bigListPlayer.name,
-                            rating: parseInt( bigListPlayer.rating, 10 ) || null,
-                            rating_unofficial: parseInt( smallListPlayer.rating, 10 ) || null,
-                            title: bigListPlayer.title,
-                            country: smallListPlayer.country
-                        };
-
-
                         matches.add( verifiedPlayer );
+
+                    } else {
+
+                        fs.appendFile( '../data/invalid_players.json', JSON.stringify( verifiedPlayer ), err => {
+                            if ( err ) throw err;
+                            log.trace( 'Invalid player added to list', smallListPlayer.name, smallListPlayer.rating );
+                        } );
                     }
                 }
             } );
@@ -55,12 +71,12 @@ fs.readFile( '../data/women_players.json', 'utf8', ( err, smallListData ) => {
 
     readStream.on( 'end', function () {
 
-        fs.writeFile( '../data/final_baku_women_players.json', JSON.stringify( [ ...matches ] ), 'UTF8', err => {
+        fs.writeFile( '../data/final_baku_' + type + '_players.json', JSON.stringify( [ ...matches ] ), 'UTF8', err => {
 
             if ( err ) log.trace( err );
 
             log.trace( 'finished', matches.length );
-            console.timeEnd( "generate-list" )
+            console.timeEnd( "generate-list" );
         } );
 
     } );

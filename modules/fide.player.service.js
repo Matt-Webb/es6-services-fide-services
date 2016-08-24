@@ -4,7 +4,7 @@ const http = require( 'http' );
 const fs = require( 'fs' );
 const AdmZip = require( 'adm-zip' );
 const bigXml = require( 'big-xml' );
-const log = require( './logger.service' );
+const log = require( './general/logger.service' );
 
 
 class FidePlayerService {
@@ -84,7 +84,10 @@ class FidePlayerService {
 
                         player = {
                             id: parseInt( p[ 0 ].text, 10 ) || null,
-                            name: p[ 1 ].text || null
+                            name: p[ 1 ].text || null,
+                            title: p[ 4 ].text || null,
+                            sex: p[ 3 ].text || null,
+                            country: p[ 2 ].text || null
                         };
 
                         if ( typeof rating !== 'undefined' || typeof rating.text !== 'undefined' ) {

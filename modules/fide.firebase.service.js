@@ -3,7 +3,7 @@
 const moment = require( 'moment' );
 const firebase = require( 'firebase' );
 const bigXml = require( 'big-xml' );
-const log = require( './logger.service' );
+const log = require( './general/logger.service' );
 
 class FirebasePlayerService {
 

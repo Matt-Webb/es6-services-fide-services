@@ -3,7 +3,6 @@ const fs = require( 'fs' );
 const config = require( '../config/app.json' );
 const firebase = require( "firebase" );
 
-
 firebase.initializeApp( {
     serviceAccount: config.db.firebase.bakuOlympiad.serviceAccount,
     databaseURL: config.db.firebase.bakuOlympiad.databaseURL
@@ -11,7 +10,7 @@ firebase.initializeApp( {
 
 const db = firebase.database();
 
-function compare( a, b ) {
+compare( a, b ) => {
     if ( a.rating < b.rating )
         return -1;
     if ( a.rating > b.rating )
