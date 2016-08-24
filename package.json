@@ -27,6 +27,7 @@
     "mocha": "^2.5.3",
     "moment": "^2.14.1",
     "node-schedule": "^1.1.1",
+    "request": "^2.74.0",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {

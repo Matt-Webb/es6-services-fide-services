@@ -11,7 +11,7 @@
             }
         },
         "mongo" : {
-                "api" : "http//:localhost:3000/api"
+                "api" : "http://localhost:3000/api"
         },
         "fide": {
             "url": "http://ratings.fide.com/download/players_list_xml.zip",
@@ -21,11 +21,11 @@
     },
     "open": {
         "url": "http://www1.bakuchessolympiad.com/content/53",
-        "output": "./data/open_players.json"
+        "output": "./data/baku_open_players.json"
     },
     "womens": {
         "url": "http://www1.bakuchessolympiad.com/content/54",
-        "output": "./data/women_players.json"
+        "output": "./data/baku_women_players.json"
     },
     "cron ": "/1 * * * * *",
     "logger ": {
