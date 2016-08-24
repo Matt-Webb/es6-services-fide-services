@@ -10,6 +10,7 @@ const readStream = fs.createReadStream( '../data/players.json', {
 const parser = JSONStream.parse( '*' );
 
 let type = process.argv[ 2 ];
+let createInvalidList = false;
 
 if ( !type ) {
     console.log( 'Please provide a type "open" or "women" as a parameter!' );
@@ -17,6 +18,7 @@ if ( !type ) {
 }
 
 let matches = new Set();
+let whiteList = JSON.parse(fs.readFileSync('../data/whitelist.json', 'utf8'));
 
 console.time( "generate-list" );
 
@@ -60,10 +62,24 @@ fs.readFile( '../data/baku_' + type + '_players.json', 'utf8', ( err, smallListD
 
                     } else {
 
-                        fs.appendFile( '../data/invalid_players.json', JSON.stringify( verifiedPlayer ), err => {
-                            if ( err ) throw err;
-                            log.trace( 'Invalid player added to list', smallListPlayer.name, smallListPlayer.rating );
-                        } );
+                        // loop through the whitelist to see if our player should be added!
+                        whiteList.forEach( id => {
+                            if( id === bigListPlayer.id ) {
+                                matches.add( verifiedPlayer );
+                                log.trace( 'Player from White List cleared for action!' );
+                            }
+                        });
+
+                        // create a new invalid list:
+                        if( createInvalidList ) {
+
+                            fs.appendFile( '../data/invalid_players.json', JSON.stringify( verifiedPlayer ), err => {
+                                if ( err ) throw err;
+                                log.trace( 'Invalid player added to list', smallListPlayer.name, smallListPlayer.rating );
+                            } );
+
+                        }
+
                     }
                 }
             } );
