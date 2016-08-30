@@ -16,10 +16,12 @@
   "dependencies": {
     "JSONStream": "^1.1.4",
     "adm-zip": "^0.4.7",
+    "async": "^2.0.1",
     "big-xml": "^0.7.0",
     "body-parser": "^1.15.2",
     "chai": "^3.5.0",
     "cheerio": "^0.20.0",
+    "csv-parse": "^1.1.7",
     "csvtojson": "^1.0.0",
     "event-stream": "^3.3.4",
     "express": "^4.14.0",
