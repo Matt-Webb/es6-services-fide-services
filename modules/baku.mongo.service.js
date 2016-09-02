@@ -7,12 +7,7 @@ const log = require( '../modules/general/logger.service' );
 
 let type = process.argv[ 2 ] || 'open';
 
-if ( !type || ( type !== 'open' || type !== 'women' ) ) {
-    log.trace( 'Please provide a type "open" or "women" as a parameter!' );
-    return;
-}
-
-fs.readFile( '../data/final_baku_' + type + '_players.json', 'utf8', ( err, players ) => {
+fs.readFile( '../data/baku-' + type + '.json', 'utf8', ( err, players ) => {
 
     JSON.parse( players ).forEach( player => {
 
@@ -21,13 +16,24 @@ fs.readFile( '../data/final_baku_' + type + '_players.json', 'utf8', ( err, play
             method: 'POST',
             json: true,
             body: {
-                player: player
+                player: {
+                    id: player.FideID,
+                    rank: player[ 'No.' ],
+                    name: player.Name.trim(),
+                    rating: player.Rtg,
+                    title: player.title,
+                    country: player.Team,
+                    team: player.Team,
+                    fed: player.FED,
+                    board: player[ 'Bo.' ],
+                    eventType: type
+                }
             }
         };
 
         request.post( options, ( err, res, body ) => {
             if ( !err && res.statusCode === 200 ) {
-                log.trace( 'Player added!', body.player.name );
+                log.trace( 'Player added!' );
             } else {
                 log.trace( err );
             }
