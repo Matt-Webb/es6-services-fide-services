@@ -3,7 +3,7 @@
 const request = require( 'request' );
 const url = 'http://localhost:3000';
 
-function getPlayer( id ) {
+function getPlayerById( id ) {
 
     return new Promise( ( fulfill, reject ) => {
 
@@ -18,4 +18,22 @@ function getPlayer( id ) {
     } );
 };
 
-module.exports = getPlayer;
+function getPlayers() {
+
+    return new Promise( ( fulfill, reject ) => {
+
+        request.get( url + '/api/players/', ( error, response, body ) => {
+
+            if ( !error && response.statusCode === 200 ) {
+                fulfill( body );
+            } else {
+                reject( new Error( error ) );
+            }
+        } );
+    } );
+}
+
+module.exports = {
+    getPlayerById,
+    getPlayers
+};

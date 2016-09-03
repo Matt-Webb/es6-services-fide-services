@@ -3,7 +3,6 @@ const Converter = require( "csvtojson" ).Converter;
 const converter = new Converter( {} );
 const log = require( './general/logger.service' );
 const config = require( '../config/app' );
-const playerService = require( './baku.team.service' );
 
 
 // gets the id from the csv data string:
