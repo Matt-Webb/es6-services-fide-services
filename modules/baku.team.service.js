@@ -33,7 +33,24 @@ function getPlayers() {
     } );
 }
 
+function getTeams() {
+
+    return new Promise( ( fulfill, reject ) => {
+
+        request.get( url + '/api/teams/', ( error, response, body ) => {
+
+            if ( !error && response.statusCode === 200 ) {
+                fulfill( body );
+            } else {
+                reject( new Error( error ) );
+            }
+        } );
+    } )
+
+}
+
 module.exports = {
     getPlayerById,
-    getPlayers
+    getPlayers,
+    getTeams
 };

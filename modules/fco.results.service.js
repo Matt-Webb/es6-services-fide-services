@@ -7,20 +7,17 @@ const regExp = /\(([^)]+)\)/;
 let type = process.argv[ 2 ];
 let round = process.argv[ 3 ];
 
-
-if( type === null || type === undefined ) {
+if ( type === null || type === undefined ) {
     console.log( 'please specify a type "open" or "women"' );
     return;
 }
 
-if( round === null || round === undefined ) {
-    console.log( 'please specify a round!');
-    return ;
+if ( round === null || round === undefined ) {
+    console.log( 'please specify a round!' );
+    return;
 }
 
-
-const json = require( '../data/results/round-1-' + type );
-
+const json = require( '../data/results/round-' + round + '-' + type );
 
 
 json.forEach( data => {
@@ -28,7 +25,7 @@ json.forEach( data => {
         let infoLeft = {
             name: data[ 2 ].replace( '  (w)', '' ).replace( '  (b)', '' ).replace( ',', '' ),
             rating: data[ 3 ],
-            result: processResult( data[ 8 ], 'left', regExp.exec( data[ 2 ] )[ 1 ], round ),
+            result: processResult( data[ 8 ], 'left', regExp.exec( data[ 2 ] )[ 1 ], +round ),
             board: data[ 0 ].split( '/' )[ 1 ]
         };
         results.push( infoLeft );
@@ -36,7 +33,7 @@ json.forEach( data => {
         let infoRight = {
             name: data[ 6 ].replace( '  (w)', '' ).replace( '  (b)', '' ).replace( ',', '' ),
             rating: data[ 7 ],
-            result: processResult( data[ 8 ], 'right', regExp.exec( data[ 6 ] )[ 1 ], round ),
+            result: processResult( data[ 8 ], 'right', regExp.exec( data[ 6 ] )[ 1 ], +round ),
             board: data[ 0 ].split( '/' )[ 1 ]
         };
         results.push( infoRight );
@@ -55,19 +52,17 @@ function addResults( results ) {
             try {
                 JSON.parse( players ).forEach( player => {
                     results.forEach( result => {
-                        if( player.name === result.name ) {
-                            console.log( 'MATCH!!!', player.name, result.name );
-                            sendUpdate( {
-                                id: player.id,
+                        if ( player.name === result.name ) {
+                            sendUpdate( player.id, {
                                 round: result.round,
                                 result: result.result,
                                 points: result.points
-                            });
+                            } );
                             counter++;
                         }
-                    });
-                });
-            } catch (e) {
+                    } );
+                } );
+            } catch ( e ) {
                 console.log( e );
             }
 
@@ -90,18 +85,13 @@ function addResults( results ) {
 addResults( results );
 
 
-function sendUpdate( data ) {
+function sendUpdate( id, data ) {
 
     let options = {
-        url: config.db.mongo.api + '/players/result/' + data.id,
+        url: config.db.mongo.api + '/players/result/' + id,
         method: 'PUT',
         json: true,
-        body: {
-            round: data.round,
-            colour: data.colour,
-            result: data.result,
-            points: data.points
-        }
+        body: data
     };
 
     request( options, ( err, res, body ) => {

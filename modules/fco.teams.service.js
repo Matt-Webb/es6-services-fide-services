@@ -25,9 +25,6 @@ converter.on( "end_parsed", function ( jsonArray ) {
 
     jsonArray.forEach( team => {
 
-        //if( counter >= 1000 ) return;
-
-
         for ( var i = 1; i < 6; i++ ) {
             players.push( getPlayerId( team[ 'Open player ' + i ] ) );
         }
