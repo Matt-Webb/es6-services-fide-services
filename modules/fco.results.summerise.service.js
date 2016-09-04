@@ -1,13 +1,21 @@
+"use strict";
+
+/*
+ * This service update each team with the score for each player and
+ * calculates the round by round score and end totl
+ */
+
 const request = require( 'request' );
 const teamService = require( './baku.team.service' );
 const config = require( '../config/app' );
 
+let exception = process.argv[2];
 
 function loopPlayers() {
 
     try {
 
-        teamService.getTeams().then( teams => {
+        teamService.getTeamsPlayers().then( teams => {
 
             try {
 
@@ -28,25 +36,30 @@ function loopPlayers() {
                         total: 0
                     };
 
-                    team.players.forEach( player => {
+                    if( true /*team.teamName === exception*/ ) {
 
-                        player.roundResults.forEach( result => {
+                        team.players.forEach( player => {
 
-                            console.log( result.result );
-
-                            for (var i = 1; i <= 11; i++) {
-
-                                if( result.result.round === i ) {
-                                    console.log ( result.result.points );
-                                    teamScore['r' + i] = teamScore['r' + i] + result.result.points;
-                                    teamScore.total = teamScore.total + result.result.points;
-                                }
+                            if( ! player.roundResults ) {
+                                console.log( 'exiting...');
+                                return;
                             }
+
+                            player.roundResults.forEach( result => {
+
+                                for (var i = 1; i <= 11; i++) {
+
+                                    if( result.round === i ) {
+                                        teamScore['r' + i] = teamScore['r' + i] + result.points;
+                                        teamScore.total = teamScore.total + result.points;
+                                    }
+                                }
+                            } );
+
                         } );
 
-                    } );
-
-                    sendUpdate( team._id, teamScore );
+                        sendUpdate( team._id, teamScore );
+                    }
 
                 } );
 

@@ -1,3 +1,9 @@
+"use strict";
+
+/*
+ * This service puts all the formidable for data teams into a mongo data base.
+ */
+
 const request = require( 'request' );
 const Converter = require( "csvtojson" ).Converter;
 const converter = new Converter( {} );
@@ -7,7 +13,6 @@ const config = require( '../config/app' );
 
 // gets the id from the csv data string:
 function getPlayerId( record ) {
-
     let id = record.split( '\t' )[ 4 ];
 
     if ( typeof id !== undefined || typeof id === 'Number' ) {
@@ -50,6 +55,7 @@ converter.on( "end_parsed", function ( jsonArray ) {
                     womenSilver: team[ 'Women\'s section Silver medal winners' ],
                     womenBronze: team[ 'Women\'s section Bronze medal winners' ],
                     womenIndGold: team[ 'Women\'s section individual Gold medal winner' ],
+                    playersIds: players,
                     players: players
                 }
             }
@@ -65,21 +71,17 @@ converter.on( "end_parsed", function ( jsonArray ) {
                     log.error( err );
                 }
             } );
-
-
             players = [];
 
         } catch (e) {
             console.log( 'ERROR!!!', e );
         }
-
-
     } );
 
 } );
 
 
-converter.fromFile( "../data/entry-form-data.csv", function ( err, result ) {
+converter.fromFile( "../data/exceptions.csv", function ( err, result ) {
     if ( err ) {
         log.error( 'Something went wrong!', err );
     } else {

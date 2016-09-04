@@ -1,3 +1,10 @@
+"use strict";
+
+/*
+ * This service takes the results from the chess-results site (manual csv) and adds the result to
+ * to the database, to the specific player.
+ */
+
 const request = require( 'request' );
 const playerService = require( './baku.team.service' );
 const config = require( '../config/app' );
@@ -51,8 +58,12 @@ function addResults( results ) {
 
             try {
                 JSON.parse( players ).forEach( player => {
+
+
                     results.forEach( result => {
-                        if ( player.name === result.name ) {
+
+                        if ( player.name.trim() === result.name.trim() ) {
+
                             sendUpdate( player.id, {
                                 round: result.round,
                                 result: result.result,
@@ -65,15 +76,11 @@ function addResults( results ) {
             } catch ( e ) {
                 console.log( e );
             }
-
             console.log( 'Matched Found:', counter );
 
         }, error => {
-
             console.log( 'error', error );
-
         } );
-
 
     } catch ( e ) {
         console.log( e );
@@ -96,12 +103,11 @@ function sendUpdate( id, data ) {
 
     request( options, ( err, res, body ) => {
         if ( !err && res.statusCode === 200 ) {
-            console.log( 'Player updated!', body );
+            //console.log( 'Player updated!', body );
         } else {
             console.log( err );
         }
     } );
-
 }
 
 

@@ -49,8 +49,41 @@ function getTeams() {
 
 }
 
+function getTeamsDetail() {
+
+    return new Promise( ( fulfill, reject ) => {
+
+        request.get( url + '/api/teams/detail', ( error, response, body ) => {
+
+            if ( !error && response.statusCode === 200 ) {
+                fulfill( body );
+            } else {
+                reject( new Error( error ) );
+            }
+        } );
+    } )
+}
+
+function getTeamsPlayers() {
+
+    return new Promise( ( fulfill, reject ) => {
+
+        request.get( url + '/api/teams/players', ( error, response, body ) => {
+
+            if ( !error && response.statusCode === 200 ) {
+                fulfill( body );
+            } else {
+                reject( new Error( error ) );
+            }
+        } );
+    } )
+
+}
+
 module.exports = {
     getPlayerById,
     getPlayers,
-    getTeams
+    getTeams,
+    getTeamsDetail,
+    getTeamsPlayers
 };
