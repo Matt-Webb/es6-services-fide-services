@@ -81,7 +81,7 @@ converter.on( "end_parsed", function ( jsonArray ) {
 } );
 
 
-converter.fromFile( "../data/exceptions.csv", function ( err, result ) {
+converter.fromFile( "../data/exceptions-new.csv", function ( err, result ) {
     if ( err ) {
         log.error( 'Something went wrong!', err );
     } else {

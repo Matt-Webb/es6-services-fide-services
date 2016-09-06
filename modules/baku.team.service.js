@@ -80,10 +80,38 @@ function getTeamsPlayers() {
 
 }
 
+function updateTeamISO( id, iso ) {
+
+    let options = {
+        url: url + '/api/teams/iso/' + id,
+        method: 'PUT',
+        json: true,
+        body: {
+            iso: iso
+        }
+    };
+
+    return new Promise( (fulfill, reject ) => {
+
+        request( options, ( err, res, body ) => {
+            if ( !err && res.statusCode === 200 ) {
+                console.log( 'Team updated!', body );
+                fulfill( body );
+            } else {
+                console.log( err, res );
+                reject( err );
+            }
+        } );
+    });
+
+
+}
+
 module.exports = {
     getPlayerById,
     getPlayers,
     getTeams,
     getTeamsDetail,
-    getTeamsPlayers
+    getTeamsPlayers,
+    updateTeamISO
 };

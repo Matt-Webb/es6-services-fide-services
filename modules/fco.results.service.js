@@ -59,19 +59,20 @@ function addResults( results ) {
             try {
                 JSON.parse( players ).forEach( player => {
 
+                        results.forEach( result => {
 
-                    results.forEach( result => {
+                            if ( player.name.trim() === result.name.trim() ) {
 
-                        if ( player.name.trim() === result.name.trim() ) {
+                                sendUpdate( player.id, {
+                                    round: result.round,
+                                    result: result.result,
+                                    points: result.points
+                                } );
+                                counter++;
+                            }
 
-                            sendUpdate( player.id, {
-                                round: result.round,
-                                result: result.result,
-                                points: result.points
-                            } );
-                            counter++;
-                        }
-                    } );
+                        } );
+
                 } );
             } catch ( e ) {
                 console.log( e );
