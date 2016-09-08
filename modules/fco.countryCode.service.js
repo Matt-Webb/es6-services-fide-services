@@ -6,6 +6,7 @@
 
 const teamService = require( './baku.team.service' );
 const countryData = require( '../data/country/codes.json' );
+let counter = 0;
 
 teamService.getTeams().then( teams => {
 
@@ -18,14 +19,20 @@ teamService.getTeams().then( teams => {
             if ( info.country === team.country ) {
 
                 try {
-                    teamService.updateTeamISO( team._id, info.iso ).then(
-                        data => {
-                            console.log( 'Success', data );
-                        },
-                        error => {
-                            console.log( 'Error', error );
-                        }
-                    );
+
+                    setTimeout(() => {
+                        teamService.updateTeamISO( team._id, info.iso ).then(
+                            data => {
+                                console.log( 'Success', data );
+                            },
+                            error => {
+                                console.log( 'Error', error );
+                            }
+                        );
+                    }, counter * 10);
+
+                    counter++;
+
                 } catch (e) {
                     console.log( e );
                 }

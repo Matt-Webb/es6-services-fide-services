@@ -29,8 +29,33 @@ function getPlayers() {
     } );
 }
 
-function getTeams() {
+function getTeamsByRoundByCountryByScore( round, country ) {
 
+    return new Promose( ( fulfill, reject ) => {
+        request.get( url + '/api/teams/rank/' + round + '/' + country, ( error, response, body ) => {
+            if ( !error && response.statusCode === 200 ) {
+                fulfill( body );
+            } else {
+                reject( new Error( error ) );
+            }
+        } );
+    } );
+}
+
+function getTeamsByRoundByScore( round ) {
+
+    return new Promise( ( fulfill, reject ) => {
+        request.get( url + '/api/teams/rank/' + round, ( error, response, body ) => {
+            if ( !error && response.statusCode === 200 ) {
+                fulfill( body );
+            } else {
+                reject( new Error( error ) );
+            }
+        } );
+    } );
+}
+
+function getTeams() {
     return new Promise( ( fulfill, reject ) => {
         request.get( url + '/api/teams/', ( error, response, body ) => {
             if ( !error && response.statusCode === 200 ) {
@@ -92,6 +117,30 @@ function getTeamsByCountry( country ) {
             }
         } );
     } );
+}
+
+function updateTeamRoundRank( id, rank ) {
+
+    let options = {
+        url: url + '/api/teams/rank/' + id,
+        method: 'PUT',
+        json: true,
+        body: {
+            rank: rank
+        }
+    };
+
+    return new Promise( ( fulfill, reject ) => {
+        request( options, ( err, res, body ) => {
+            if ( !err && res.statusCode === 200 ) {
+                fulfill( body );
+            } else {
+                reject( err );
+            }
+
+        } )
+    } )
+
 }
 
 function updateTeamISO( id, iso ) {
@@ -162,13 +211,20 @@ module.exports = {
     // GET
     getPlayerById,
     getPlayers,
+
+    getCountries,
+
     getTeams,
     getTeamsDetail,
     getTeamsPlayers,
-    getCountries,
     getTeamsByCountry,
+    getTeamsByRoundByCountryByScore,
+    getTeamsByRoundByScore,
+    
     // PUT
-    updateTeamISO,
     updatePlayerCurrentRank,
-    updatePlayerCurrentTotal
+    updatePlayerCurrentTotal,
+
+    updateTeamISO,
+    updateTeamRoundRank
 };

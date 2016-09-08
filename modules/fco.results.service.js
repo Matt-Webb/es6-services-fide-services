@@ -28,6 +28,7 @@ const json = require( '../data/results/round-' + round + '-' + type );
 
 
 json.forEach( data => {
+
     if ( data[ 0 ].indexOf( '/' ) > -1 ) {
         let infoLeft = {
             name: data[ 2 ].replace( '  (w)', '' ).replace( '  (b)', '' ).replace( ',', '' ),
@@ -50,27 +51,28 @@ json.forEach( data => {
 
 function addResults( results ) {
 
-    let counter = 0;
-
     try {
+
+        let counter = 0;
 
         playerService.getPlayers().then( players => {
 
             try {
+
                 JSON.parse( players ).forEach( player => {
 
                         results.forEach( result => {
 
                             if ( player.name.trim() === result.name.trim() ) {
 
-                                sendUpdate( player.id, {
-                                    round: result.round,
-                                    result: result.result,
-                                    points: result.points
-                                } );
-                                counter++;
+                                //setTimeout( () => {
+                                    sendUpdate( player.id, {
+                                        round: result.round,
+                                        result: result.result,
+                                        points: result.points
+                                    } );
+                                //}, counter * 10);
                             }
-
                         } );
 
                 } );
@@ -151,10 +153,12 @@ function processResult( score, side, colour, round ) {
         }
     }
 
-    return {
+    let info = {
         round: round,
         result: result,
         points: points,
         colour: colour
     };
+
+    return info;
 }

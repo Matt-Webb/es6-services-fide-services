@@ -25,8 +25,6 @@ teamService.getCountries().then( countries => {
 
     });
 
-
-
 }, function( error ) {
     console.log( error );
 } );

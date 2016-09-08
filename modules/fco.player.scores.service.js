@@ -1,6 +1,6 @@
 
 const playerService = require( './baku.team.service' );
-
+let counter = 0;
 
 playerService.getPlayers().then( players => {
 
@@ -13,11 +13,15 @@ playerService.getPlayers().then( players => {
                 total += result.points;
             });
 
-            playerService.updatePlayerCurrentTotal( player.id, total ).then( data => {
-                console.log( data );
-            }, error => {
-                console.log( error );
-            })
+            setTimeout(() => {
+                playerService.updatePlayerCurrentTotal( player.id, total ).then( data => {
+                    console.log( data.name );
+                }, error => {
+                    console.log( error );
+                });
+            }, counter * 10);
+
+            counter++;
 
         } catch (e) {
             console.log( e );

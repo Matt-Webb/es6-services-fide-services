@@ -11,15 +11,31 @@ const log = require( './general/logger.service' );
 const config = require( '../config/app' );
 
 
+let teamsDB = process.argv[ 2 ];
+let csvFileName = process.argv[ 3 ];
+
+if ( !teamsDB ) {
+    console.log( 'Please tell me which team DB you want to populate? "teams"  or "teams-w2s"' );
+    return;
+}
+
+if ( !csvFileName ) {
+    console.log( 'Please tell me which CVS you want to use?' );
+    return;
+}
+
 // gets the id from the csv data string:
 function getPlayerId( record ) {
-    let id = record.split( '\t' )[ 4 ];
 
-    if ( typeof id !== undefined || typeof id === 'Number' ) {
-        return id;
-    } else {
-        return reject( new Error( 'id is not valid' ) );
-    }
+    if ( record ) {
+        let id = record.split( '\t' )[ 4 ];
+
+        if ( typeof id !== undefined || typeof id === 'Number' ) {
+            return id;
+        } else {
+            return reject( new Error( 'id is not valid' ) );
+        }
+    } 
 };
 
 //end_parsed will be emitted once parsing finished
@@ -39,7 +55,7 @@ converter.on( "end_parsed", function ( jsonArray ) {
         }
 
         let options = {
-            url: config.db.mongo.api + '/teams',
+            url: config.db.mongo.api + '/' + teamsDB,
             method: 'POST',
             json: true,
             body: {
@@ -54,8 +70,6 @@ converter.on( "end_parsed", function ( jsonArray ) {
                     womenGold: team[ 'Women\'s section Gold medal winners' ],
                     womenSilver: team[ 'Women\'s section Silver medal winners' ],
                     womenBronze: team[ 'Women\'s section Bronze medal winners' ],
-                    womenIndGold: team[ 'Women\'s section individual Gold medal winner' ],
-                    playersIds: players,
                     players: players
                 }
             }
@@ -63,25 +77,30 @@ converter.on( "end_parsed", function ( jsonArray ) {
 
         try {
 
-            request.post( options, ( err, res, body ) => {
-                if ( !err && res.statusCode === 200 ) {
-                    log.trace( 'Team added!', team.Name );
+            setTimeout( function () {
+                request.post( options, ( err, res, body ) => {
+                    if ( !err && res.statusCode === 200 ) {
+                        log.trace( 'Team added!', team.Name );
 
-                } else {
-                    log.error( err );
-                }
-            } );
+                    } else {
+                        log.error( err );
+                    }
+                } );
+            }, counter * 10 );
+
             players = [];
 
-        } catch (e) {
+        } catch ( e ) {
             console.log( 'ERROR!!!', e );
         }
+
+        counter++;
     } );
 
 } );
 
 
-converter.fromFile( "../data/exceptions-new.csv", function ( err, result ) {
+converter.fromFile( "../data/" + csvFileName + ".csv", function ( err, result ) {
     if ( err ) {
         log.error( 'Something went wrong!', err );
     } else {

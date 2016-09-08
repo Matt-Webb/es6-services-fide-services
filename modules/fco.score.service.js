@@ -9,73 +9,97 @@ const request = require( 'request' );
 const teamService = require( './baku.team.service' );
 const config = require( '../config/app' );
 
-let exceptions = [
-    'Savvy Smash Kings',
-    'The Infinite Improbability Five',
-    'Bayern',
-    'TobbisFighters',
-    'fourfouldpawn'
-];
-
 function loopPlayers() {
 
     try {
-
         teamService.getTeamsPlayers().then( teams => {
-
             try {
+                let counter = 0;
 
                 JSON.parse( teams ).forEach( team => {
 
-                    //exceptions.forEach( excep => {
+                    let teamScore = {
+                        r1: {
+                            score: 0,
+                            total: 0
+                        },
+                        r2: {
+                            score: 0,
+                            total: 0
+                        },
+                        r3: {
+                            score: 0,
+                            total: 0
+                        },
+                        r4: {
+                            score: 0,
+                            total: 0
+                        },
+                        r5: {
+                            score: 0,
+                            total: 0
+                        },
+                        r6: {
+                            score: 0,
+                            total: 0
+                        },
+                        r7: {
+                            score: 0,
+                            total: 0
+                        },
+                        r8: {
+                            score: 0,
+                            total: 0
+                        },
+                        r9: {
+                            score: 0,
+                            total: 0
+                        },
+                        r10: {
+                            score: 0,
+                            total: 0
+                        },
+                        r11: {
+                            score: 0,
+                            total: 0
+                        },
+                        total: 0
+                    };
 
-                        //if ( excep === team.teamName ) {
+                    team.players.forEach( player => {
 
-                            console.log('Running score for', team.teamName );
+                        if ( !player.roundResults ) {
+                            console.log( 'exiting...' );
+                            return;
+                        }
 
-                            let teamScore = {
-                                r1: 0,
-                                r2: 0,
-                                r3: 0,
-                                r4: 0,
-                                r5: 0,
-                                r6: 0,
-                                r7: 0,
-                                r8: 0,
-                                r9: 0,
-                                r10: 0,
-                                r11: 0,
-                                total: 0
-                            };
+                        player.roundResults.forEach( result => {
 
-                            if ( true /*team.teamName === exception*/ ) {
+                            for ( var i = 1; i <= 11; i++ ) {
 
-                                team.players.forEach( player => {
-
-                                    if ( !player.roundResults ) {
-                                        console.log( 'exiting...' );
-                                        return;
-                                    }
-
-                                    player.roundResults.forEach( result => {
-
-                                        for ( var i = 1; i <= 11; i++ ) {
-
-                                            if ( result.round === i ) {
-                                                teamScore[ 'r' + i ] = teamScore[ 'r' + i ] + result.points;
-                                                teamScore.total = teamScore.total + result.points;
-                                            }
-                                        }
-                                    } );
-
-                                } );
-
-                                sendUpdate( team._id, teamScore );
+                                if ( result.round === i ) {
+                                    teamScore[ 'r' + i ].score = teamScore[ 'r' + i ].score + result.points;
+                                    teamScore.total = teamScore.total + result.points;
+                                }
                             }
-                        //}
-                    //} ) 
-                } );
+                        } );
+                    } );
 
+                    // create a cummulative list of score for rank tracking:
+                    let total = 0;
+                    for ( let i = 1; i <= 11; i++ ) {
+                        total += teamScore[ 'r' + i ].score;
+                        teamScore[ 'r' + i ].total = total;
+                    }
+
+                    setTimeout( () => {
+                        sendUpdate( team._id, teamScore );
+                    }, counter * 10 );
+
+                    counter++;
+
+                } );
+                console.log( 'complete!' );
             } catch ( e ) {
                 console.log( e );
             }
