@@ -35,7 +35,7 @@ function getPlayerId( record ) {
         } else {
             return reject( new Error( 'id is not valid' ) );
         }
-    } 
+    }
 };
 
 //end_parsed will be emitted once parsing finished
@@ -47,11 +47,11 @@ converter.on( "end_parsed", function ( jsonArray ) {
     jsonArray.forEach( team => {
 
         for ( var i = 1; i < 6; i++ ) {
-            players.push( getPlayerId( team[ 'Open player ' + i ] ) );
+            players.push( getPlayerId( team[ 'Open Board ' + i ] ) );
         }
 
         for ( var i = 1; i < 6; i++ ) {
-            players.push( getPlayerId( team[ 'Women player ' + i ] ) );
+            players.push( getPlayerId( team[ 'Women Board ' + i ] ) );
         }
 
         let options = {
@@ -77,7 +77,7 @@ converter.on( "end_parsed", function ( jsonArray ) {
 
         try {
 
-            setTimeout( function () {
+            setTimeout( () => {
                 request.post( options, ( err, res, body ) => {
                     if ( !err && res.statusCode === 200 ) {
                         log.trace( 'Team added!', team.Name );

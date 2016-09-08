@@ -17,7 +17,7 @@ teamService.getTeamsByRoundByScore( round ).then( teams => {
     JSON.parse( teams ).forEach( team => {
 
         let pointsForRound = team.score[ 0 ][ 'r' + round ].score;
-        let total = team.score[0]['r' + round ].total;
+        let total = team.score[ 0 ][ 'r' + round ].total;
 
         let rank = {
             points: pointsForRound,
@@ -26,8 +26,8 @@ teamService.getTeamsByRoundByScore( round ).then( teams => {
             roundRank: count
         };
 
-        setTimeout(function() {
-            console.log('setting request!');
+        setTimeout( () => {
+            console.log( 'setting request!' );
             teamService.updateTeamRoundRank( team._id, rank ).then( data => {
                 console.log( 'done', count );
             }, error => {
