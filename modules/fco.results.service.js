@@ -32,17 +32,23 @@ json.forEach( data => {
     if ( data[ 0 ].indexOf( '/' ) > -1 ) {
         let infoLeft = {
             name: data[ 2 ].replace( '  (w)', '' ).replace( '  (b)', '' ).replace( ',', '' ),
+            opponent: data[ 6 ].replace( '  (w)', '' ).replace( '  (b)', '' ).replace( ',', '' ),
+            opponentRating: data[ 7 ],
             rating: data[ 3 ],
             result: processResult( data[ 8 ], 'left', regExp.exec( data[ 2 ] )[ 1 ], +round ),
-            board: data[ 0 ].split( '/' )[ 1 ]
+            board: data[ 0 ].split( '/' )[ 1 ],
+            chess24url: '/' + round + '/' + data[0].split('/')[0] + '/' + data[0].split('/')[1]
         };
         results.push( infoLeft );
 
         let infoRight = {
             name: data[ 6 ].replace( '  (w)', '' ).replace( '  (b)', '' ).replace( ',', '' ),
+            opponent: data[ 2 ].replace( '  (w)', '' ).replace( '  (b)', '' ).replace( ',', '' ),
+            opponentRating: data[ 3 ],
             rating: data[ 7 ],
             result: processResult( data[ 8 ], 'right', regExp.exec( data[ 6 ] )[ 1 ], +round ),
-            board: data[ 0 ].split( '/' )[ 1 ]
+            board: data[ 0 ].split( '/' )[ 1 ],
+            chess24url: '/' + round + '/' + data[0].split('/')[0] + '/' + data[0].split('/')[1]
         };
         results.push( infoRight );
     }
