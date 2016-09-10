@@ -8,13 +8,20 @@ const fs = require( 'fs' );
 const teamService = require( './baku.team.service' );
 
 let round = process.argv[2];
+let TeamsDB = process.argv[3];
 
 if( ! round ) {
     console.log( 'Please provide a round for this data!');
     return;
 }
 
-teamService.getTeamsDetail().then( teams => {
+if( ! TeamsDB ) {
+    console.log( 'Please provide a TeamsDB "teams" or "teams-w2s" for this data!');
+    return;
+}
+
+
+teamService.getTeamsDetail( TeamsDB ).then( teams => {
 
     console.log( 'Got teams!', JSON.parse( teams ).length );
 

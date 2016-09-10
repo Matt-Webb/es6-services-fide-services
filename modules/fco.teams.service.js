@@ -27,10 +27,15 @@ if ( !csvFileName ) {
 // gets the id from the csv data string:
 function getPlayerId( record ) {
 
+    console.log('result', record );
+
     if ( record ) {
-        let id = record.split( '\t' )[ 4 ];
+        // old method:
+        //let id = record.split( '\t' )[ 4 ];
+        let id = record.substr(record.indexOf("– ") + 2).trim();
 
         if ( typeof id !== undefined || typeof id === 'Number' ) {
+            console.log( id );
             return id;
         } else {
             return reject( new Error( 'id is not valid' ) );
@@ -70,18 +75,17 @@ converter.on( "end_parsed", function ( jsonArray ) {
                     womenGold: team[ 'Women\'s section Gold medal winners' ],
                     womenSilver: team[ 'Women\'s section Silver medal winners' ],
                     womenBronze: team[ 'Women\'s section Bronze medal winners' ],
+                    competitions: 'W2S',
                     players: players
                 }
             }
         };
 
         try {
-
             setTimeout( () => {
                 request.post( options, ( err, res, body ) => {
                     if ( !err && res.statusCode === 200 ) {
                         log.trace( 'Team added!', team.Name );
-
                     } else {
                         log.error( err );
                     }
@@ -93,7 +97,6 @@ converter.on( "end_parsed", function ( jsonArray ) {
         } catch ( e ) {
             console.log( 'ERROR!!!', e );
         }
-
         counter++;
     } );
 

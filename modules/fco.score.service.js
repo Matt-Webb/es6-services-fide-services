@@ -9,10 +9,25 @@ const request = require( 'request' );
 const teamService = require( './baku.team.service' );
 const config = require( '../config/app' );
 
+let teamsDB = process.argv[ 2 ];
+let roundStart = process.argv[ 3 ];
+
+
+if ( !teamsDB ) {
+    console.log( 'Please tell me which team DB you want to populate? "teams"  or "teams-w2s"' );
+    return;
+}
+
+if( ! roundStart ) {
+    console.log( 'Please provide a round start! This is where to begin the score calculations!');
+    return;
+}
+
+
 function loopPlayers() {
 
     try {
-        teamService.getTeamsPlayers().then( teams => {
+        teamService.getTeamsPlayers( teamsDB ).then( teams => {
             try {
                 let counter = 0;
 
@@ -118,7 +133,7 @@ loopPlayers();
 function sendUpdate( id, score ) {
 
     let options = {
-        url: config.db.mongo.api + '/teams/subtotal/' + id,
+        url: config.db.mongo.api + '/' + teamsDB + '/subtotal/' + id,
         method: 'PUT',
         json: true,
         body: score
