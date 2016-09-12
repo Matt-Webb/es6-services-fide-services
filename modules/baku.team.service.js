@@ -143,6 +143,30 @@ function updateTeamRoundRank( id, rank, TeamsDB ) {
 
 }
 
+function updatePlayerPickedCount( id, picked ) {
+
+    console.log( picked );
+
+    let options = {
+        url: url + '/api/players/player-picked/' + id,
+        method: 'PUT',
+        json: true,
+        body: {
+            picked: picked
+        }
+    };
+
+    return new Promise( ( fulfill, reject ) => {
+        request( options, ( err, res, body ) => {
+            if ( !err && res.statusCode === 200 ) {
+                fulfill( body );
+            } else {
+                reject( err );
+            }
+        } );
+    } );
+}
+
 function updateTeamISO( id, iso, TeamsDB ) {
 
     let options = {
@@ -224,6 +248,7 @@ module.exports = {
     // PUT
     updatePlayerCurrentRank,
     updatePlayerCurrentTotal,
+    updatePlayerPickedCount,
 
     updateTeamISO,
     updateTeamRoundRank

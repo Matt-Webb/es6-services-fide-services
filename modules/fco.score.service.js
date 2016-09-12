@@ -90,7 +90,7 @@ function loopPlayers() {
 
                         player.roundResults.forEach( result => {
 
-                            for ( var i = 1; i <= 11; i++ ) {
+                            for ( var i = 6; i <= 11; i++ ) {
 
                                 if ( result.round === i ) {
                                     teamScore[ 'r' + i ].score = teamScore[ 'r' + i ].score + result.points;
@@ -102,7 +102,7 @@ function loopPlayers() {
 
                     // create a cummulative list of score for rank tracking:
                     let total = 0;
-                    for ( let i = 1; i <= 11; i++ ) {
+                    for ( let i = 6; i <= 11; i++ ) {
                         total += teamScore[ 'r' + i ].score;
                         teamScore[ 'r' + i ].total = total;
                     }
