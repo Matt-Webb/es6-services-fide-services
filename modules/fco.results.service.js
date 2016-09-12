@@ -30,6 +30,7 @@ const json = require( '../data/results/round-' + round + '-' + type );
 json.forEach( data => {
 
     if ( data[ 0 ].indexOf( '/' ) > -1 ) {
+
         let infoLeft = {
             name: data[ 2 ].replace( '  (w)', '' ).replace( '  (b)', '' ).replace( ',', '' ),
             opponent: data[ 6 ].replace( '  (w)', '' ).replace( '  (b)', '' ).replace( ',', '' ),
@@ -37,7 +38,7 @@ json.forEach( data => {
             rating: data[ 3 ],
             result: processResult( data[ 8 ], 'left', regExp.exec( data[ 2 ] )[ 1 ], +round ),
             board: data[ 0 ].split( '/' )[ 1 ],
-            chess24url: '/' + round + '/' + data[0].split('/')[0] + '/' + data[0].split('/')[1]
+            chess24Url: '/' + round + '/' + data[0].split('/')[0] + '/' + data[0].split('/')[1]
         };
         results.push( infoLeft );
 
@@ -48,7 +49,7 @@ json.forEach( data => {
             rating: data[ 7 ],
             result: processResult( data[ 8 ], 'right', regExp.exec( data[ 6 ] )[ 1 ], +round ),
             board: data[ 0 ].split( '/' )[ 1 ],
-            chess24url: '/' + round + '/' + data[0].split('/')[0] + '/' + data[0].split('/')[1]
+            chess24Url: '/' + round + '/' + data[0].split('/')[0] + '/' + data[0].split('/')[1]
         };
         results.push( infoRight );
     }
@@ -71,21 +72,27 @@ function addResults( results ) {
 
                             if ( player.name.trim() === result.name.trim() ) {
 
-                                //setTimeout( () => {
+                                setTimeout( () => {
                                     sendUpdate( player.id, {
                                         round: result.round,
                                         result: result.result,
-                                        points: result.points
+                                        round: result.result.round,
+                                        result: result.result.result,
+                                        points: result.result.points,
+                                        colour: result.result.colour,
+                                        opponent: result.opponent,
+                                        opponentRating: result.opponentRating,
+                                        chess24Url: result.chess24Url
                                     } );
-                                //}, counter * 10);
+                                }, counter * 5);
                             }
                         } );
-
+                        counter++;
                 } );
             } catch ( e ) {
                 console.log( e );
             }
-            console.log( 'Matched Found:', counter );
+            console.log( 'Matches Found:', counter );
 
         }, error => {
             console.log( 'error', error );
@@ -112,7 +119,7 @@ function sendUpdate( id, data ) {
 
     request( options, ( err, res, body ) => {
         if ( !err && res.statusCode === 200 ) {
-            //console.log( 'Player updated!', body );
+            console.log( 'Player updated!' );
         } else {
             console.log( err );
         }

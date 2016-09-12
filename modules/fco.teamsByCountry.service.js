@@ -7,11 +7,11 @@
 const teamService = require( './baku.team.service' );
 const fs = require( 'fs' );
 
-teamService.getCountries().then( countries => {
+teamService.getCountries( 'teams' ).then( countries => {
 
     JSON.parse( countries ).forEach( country => {
 
-        teamService.getTeamsByCountry( country._id.country ).then( list => {
+        teamService.getTeamsByCountry( country._id.country, 'teams' ).then( list => {
             try {
                 fs.writeFile( '../data/results/teams-by-country/' + country._id.country + '.json', list , 'UTF8', err => {
 

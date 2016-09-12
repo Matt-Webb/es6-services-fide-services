@@ -7,8 +7,15 @@
 const teamService = require( './baku.team.service' );
 const countryData = require( '../data/country/codes.json' );
 let counter = 0;
+let teamsDB = process.argv[ 2 ];
 
-teamService.getTeams().then( teams => {
+if ( !teamsDB ) {
+    console.log( 'Please tell me which team DB you want to populate? "teams"  or "teams-w2s"' );
+    return;
+}
+
+
+teamService.getTeams( teamsDB ).then( teams => {
 
     JSON.parse( teams ).forEach( team => {
 
@@ -17,11 +24,9 @@ teamService.getTeams().then( teams => {
         countryData.forEach( info => {
 
             if ( info.country === team.country ) {
-
                 try {
-
                     setTimeout(() => {
-                        teamService.updateTeamISO( team._id, info.iso ).then(
+                        teamService.updateTeamISO( team._id, info.iso, teamsDB ).then(
                             data => {
                                 console.log( 'Success', data );
                             },
@@ -36,12 +41,7 @@ teamService.getTeams().then( teams => {
                 } catch (e) {
                     console.log( e );
                 }
-
-
             }
-
-        } )
-
+        } );
     } );
-
 } );

@@ -29,10 +29,10 @@ function getPlayers() {
     } );
 }
 
-function getTeamsByRoundByCountryByScore( round, country ) {
+function getTeamsByRoundByCountryByScore( round, country, TeamsDB ) {
 
     return new Promose( ( fulfill, reject ) => {
-        request.get( url + '/api/teams/rank/' + round + '/' + country, ( error, response, body ) => {
+        request.get( url + '/api/' + TeamsDB + '/rank/' + round + '/' + country, ( error, response, body ) => {
             if ( !error && response.statusCode === 200 ) {
                 fulfill( body );
             } else {
@@ -42,10 +42,10 @@ function getTeamsByRoundByCountryByScore( round, country ) {
     } );
 }
 
-function getTeamsByRoundByScore( round ) {
+function getTeamsByRoundByScore( round, TeamsDB ) {
 
     return new Promise( ( fulfill, reject ) => {
-        request.get( url + '/api/teams/rank/' + round, ( error, response, body ) => {
+        request.get( url + '/api/' + TeamsDB + '/rank/' + round, ( error, response, body ) => {
             if ( !error && response.statusCode === 200 ) {
                 fulfill( body );
             } else {
@@ -55,9 +55,9 @@ function getTeamsByRoundByScore( round ) {
     } );
 }
 
-function getTeams() {
+function getTeams( TeamsDB ) {
     return new Promise( ( fulfill, reject ) => {
-        request.get( url + '/api/teams/', ( error, response, body ) => {
+        request.get( url + '/api/' + TeamsDB + '/', ( error, response, body ) => {
             if ( !error && response.statusCode === 200 ) {
                 fulfill( body );
             } else {
@@ -67,10 +67,10 @@ function getTeams() {
     } );
 }
 
-function getTeamsDetail() {
+function getTeamsDetail( TeamsDB ) {
 
     return new Promise( ( fulfill, reject ) => {
-        request.get( url + '/api/teams/detail', ( error, response, body ) => {
+        request.get( url + '/api/' + TeamsDB + '/detail', ( error, response, body ) => {
             if ( !error && response.statusCode === 200 ) {
                 fulfill( body );
             } else {
@@ -80,10 +80,10 @@ function getTeamsDetail() {
     } )
 }
 
-function getTeamsPlayers() {
+function getTeamsPlayers( TeamsDB ) {
 
     return new Promise( ( fulfill, reject ) => {
-        request.get( url + '/api/teams/players', ( error, response, body ) => {
+        request.get( url + '/api/' + TeamsDB + '/players', ( error, response, body ) => {
             if ( !error && response.statusCode === 200 ) {
                 fulfill( body );
             } else {
@@ -93,10 +93,10 @@ function getTeamsPlayers() {
     } );
 }
 
-function getCountries() {
+function getCountries( TeamsDB ) {
 
     return new Promise( ( fulfill, reject ) => {
-        request.get( url + '/api/teams/all/countries', ( error, response, body ) => {
+        request.get( url + '/api/' + TeamsDB + '/all/countries', ( error, response, body ) => {
             if ( !error && response.statusCode === 200 ) {
                 fulfill( body );
             } else {
@@ -106,10 +106,10 @@ function getCountries() {
     } );
 }
 
-function getTeamsByCountry( country ) {
+function getTeamsByCountry( country, TeamsDB ) {
 
     return new Promise( ( fulfill, reject ) => {
-        request.get( url + '/api/teams/country/' + country, ( error, response, body ) => {
+        request.get( url + '/api/' + TeamsDB + '/country/' + country, ( error, response, body ) => {
             if ( !error && response.statusCode === 200 ) {
                 fulfill( body );
             } else {
@@ -119,10 +119,10 @@ function getTeamsByCountry( country ) {
     } );
 }
 
-function updateTeamRoundRank( id, rank ) {
+function updateTeamRoundRank( id, rank, TeamsDB ) {
 
     let options = {
-        url: url + '/api/teams/rank/' + id,
+        url: url + '/api/' + TeamsDB + '/rank/' + id,
         method: 'PUT',
         json: true,
         body: {
@@ -143,10 +143,34 @@ function updateTeamRoundRank( id, rank ) {
 
 }
 
-function updateTeamISO( id, iso ) {
+function updatePlayerPickedCount( id, picked ) {
+
+    console.log( picked );
 
     let options = {
-        url: url + '/api/teams/iso/' + id,
+        url: url + '/api/players/player-picked/' + id,
+        method: 'PUT',
+        json: true,
+        body: {
+            picked: picked
+        }
+    };
+
+    return new Promise( ( fulfill, reject ) => {
+        request( options, ( err, res, body ) => {
+            if ( !err && res.statusCode === 200 ) {
+                fulfill( body );
+            } else {
+                reject( err );
+            }
+        } );
+    } );
+}
+
+function updateTeamISO( id, iso, TeamsDB ) {
+
+    let options = {
+        url: url + '/api/' + TeamsDB + '/iso/' + id,
         method: 'PUT',
         json: true,
         body: {
@@ -220,10 +244,11 @@ module.exports = {
     getTeamsByCountry,
     getTeamsByRoundByCountryByScore,
     getTeamsByRoundByScore,
-    
+
     // PUT
     updatePlayerCurrentRank,
     updatePlayerCurrentTotal,
+    updatePlayerPickedCount,
 
     updateTeamISO,
     updateTeamRoundRank
