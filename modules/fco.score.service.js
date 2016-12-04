@@ -97,6 +97,8 @@ function loopPlayers() {
                                     teamScore.total = teamScore.total + result.points;
                                 }
                             }
+                            
+                         
                         } );
                     } );
 
