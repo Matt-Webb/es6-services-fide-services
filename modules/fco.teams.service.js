@@ -59,6 +59,7 @@ converter.on( "end_parsed", function ( jsonArray ) {
             players.push( getPlayerId( team[ 'Women Board ' + i ] ) );
         }
 
+        // TODO: refactor this object call:
         let options = {
             url: config.db.mongo.api + '/' + teamsDB,
             method: 'POST',
